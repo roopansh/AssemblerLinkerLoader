@@ -1,4 +1,6 @@
 var a=5
 var b=a
 var c=1
-c=a+b
+if a = b
+a = c
+endif
