@@ -223,6 +223,7 @@ def pass1(fileNames):
                     assemblycode.append("STA " + ' # ' + str(var1))
                     location_counter = location_counter + optab['LDA'] + optab['MOV'] + optab['LDA'] + optab['SUB'] + \
                                        optab['STA']
+
             elif remul.match(line):
                 var1 = remul.match(line).group(1)
                 var2 = remul.match(line).group(2)
@@ -313,6 +314,7 @@ def pass1(fileNames):
                     assemblycode.append("STA " + ' # ' + str(var1))
                     location_counter = location_counter + optab["JZ"] + optab["MOV"] + optab["LDA"] + optab["ADD"] + optab[
                         "MOV"] + optab["MOV"] + optab["SUI"] + optab["JMP"] + optab["MOV"] + optab["STA"]
+
             elif rediv.match(line):
                 var1 = rediv.match(line).group(1)
                 var2 = rediv.match(line).group(2)
@@ -414,6 +416,203 @@ def pass1(fileNames):
                     assemblycode.append("STA " +  ' # ' + str(var1))
                     location_counter = location_counter + optab["JM"] + optab["MOV"] + optab["MOV"] + optab["ADI"] + optab[
                         "MOV"] + optab["MOV"] + optab["SUB"] + optab["JMP"] + optab["MOV"] + optab["STA"]
+                        # if a < b 
+
+            # if a < b 
+            elif reiflt.match(line):
+                var1 = reiflt.match(line).group(1)
+                var2 = reiflt.match(line).group(2)
+
+                # if 2 < 3 
+                if isint(var1) and isint(var2):
+                    # ACC <-- 2 - 3
+                    assemblycode.append("MVI A," + str(var1))
+                    assemblycode.append("SUI " + str(var2))
+                    # if SIGN BIT is 0 (i.e. positive)
+                    assemblycode.append("JP &&&" + str(ifs))
+                    # if ZERO BIT is 1 
+                    assemblycode.append("JZ &&&" + str(ifs))
+                    ifs = ifs + 1
+                    location_counter = location_counter + optab['MVI'] + optab['SUI'] + optab['JP'] + optab['JZ']
+
+                # if 2 < b
+                elif isint(var1):
+                    if var2 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+                   
+                    # ACC <-- b - 2
+                    assemblycode.append("LDA #" + str(symtab[filename][var2]))
+                    assemblycode.append("SUI " + str(var1))
+                    # if SIGN BIT is 1 (negative)
+                    assemblycode.append("JM &&&" + str(ifs))
+                    # if ZERO BIT is 1 
+                    assemblycode.append("JZ &&&" + str(ifs))
+                    ifs = ifs + 1
+                    location_counter = location_counter + optab['LDA'] + optab['SUI'] + optab['JM'] + optab['JZ']
+                
+                # if a < 3
+                elif isint(var2):
+                    if var1 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+
+                    # ACC <-- a - 3
+                    assemblycode.append("LDA #" + str(symtab[filename][var1]))
+                    assemblycode.append("SUI " + str(var2))
+                    # if SIGN BIT is 0 (positive)
+                    assemblycode.append("JP &&&" + str(ifs))
+                    # if ZERO BIT is 1 
+                    assemblycode.append("JZ &&&" + str(ifs))
+                    ifs = ifs + 1
+                    location_counter = location_counter + optab['LDA'] + optab['SUI'] + optab['JP'] + optab['JZ']
+                
+                # if a < b
+                else:
+                    if var2 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+                    if var1 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+
+                    # ACC <-- a - b
+                    assemblycode.append("LDA #" + str(symtab[filename][var2]))
+                    assemblycode.append("MOV B,A")
+                    assemblycode.append("LDA #" + str(symtab[filename][var1]))
+                    # ACC <-- a - b
+                    assemblycode.append("SUB B")
+                    # if SIGN BIT is 0 (positive)
+                    assemblycode.append("JP &&&" + str(ifs))
+                    # if ZERO BIT is 1 
+                    assemblycode.append("JZ &&&" + str(ifs))
+                    ifs = ifs + 1
+                    location_counter = location_counter + optab["LDA"] + optab["MOV"] + optab["LDA"] + optab["SUB"] + optab["JP"] + optab["JZ"]
+
+            # if a > b
+            elif reifgt.match(line):
+                var1 = reifgt.match(line).group(1)
+                var2 = reifgt.match(line).group(2)
+
+                # if 3 > 2
+                if isint(var1) and isint(var2):
+                    # ACC <-- 3 - 2
+                    assemblycode.append("MVI A," + str(var1))
+                    assemblycode.append("SUI " + str(var2))
+                    # if SIGN BIT is 1 (negative)
+                    assemblycode.append("JM &&&" + str(ifs))
+                    # if ZERO BIT is 1
+                    assemblycode.append("JZ &&&" + str(ifs))
+                    ifs = ifs + 1
+                    location_counter = location_counter + optab["MVI"] + optab["SUI"] + optab["JM"] + optab["JZ"]
+
+                # if 3 > b
+                elif isint(var1):
+                    if var2 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+
+                    # ACC <-- b - 3
+                    assemblycode.append("LDA #" + str(symtab[filename][var2]))
+                    assemblycode.append("SUI " + str(var1))
+                    # if SIGN BIT is 0 (positive)
+                    assemblycode.append("JP &&&" + str(ifs))
+                    # if ZERO BIT is 1
+                    assemblycode.append("JZ &&&" + str(ifs))
+                    ifs = ifs + 1
+                    location_counter = location_counter + optab["LDA"] + optab["SUI"] + optab["JP"] + optab["JZ"]
+                    
+                # if a > 2
+                elif isint(var2):
+                    if var1 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+
+                    # ACC <-- a - 2
+                    assemblycode.append("LDA #" + str(symtab[filename][var1]))
+                    assemblycode.append("SUI " + str(var2))
+                    # if SIGN BIT is 1 (negative)
+                    assemblycode.append("JM &&&" + str(ifs))
+                    # if ZERO BIT is 1
+                    assemblycode.append("JZ &&&" + str(ifs))
+                    ifs = ifs + 1
+                    location_counter = location_counter + optab["LDA"] + optab["SUI"] + optab["JM"] + optab["JZ"]
+                
+                # if a > b
+                else:
+                    if var2 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+                    if var1 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+
+                    # ACC <-- a - b
+                    assemblycode.append("LDA #" + str(symtab[filename][var2]))
+                    assemblycode.append("MOV B,A")
+                    assemblycode.append("LDA #" + str(symtab[filename][var1]))
+                    assemblycode.append("SUB B")
+                    # if SIGN BIT is 0 (postive)
+                    assemblycode.append("JM &&&" + str(ifs))
+                    # if ZERO BIT is 1
+                    assemblycode.append("JZ &&&" + str(ifs))
+                    ifs = ifs + 1
+                    location_counter = location_counter + optab["LDA"] + optab["MOV"] + optab["LDA"] + optab["SUB"] + optab["JM"] + optab["JZ"]
+            
+            # if a = b 
+            elif reifeq.match(line):
+                var1 = reifeq.match(line).group(1)
+                var2 = reifeq.match(line).group(2)
+
+                # if 2 = 2
+                if isint(var1) and isint(var2):
+                    assemblycode.append("MVI A," + str(var1))
+                    assemblycode.append("SUI " + str(var2))
+                    assemblycode.append("JNZ &&&" + str(ifs))
+                    ifs = ifs + 1
+                    location_counter = location_counter + optab["MVI"] + optab["SUI"] + optab["JNZ"]
+
+                # if 2 = a
+                elif isint(var1):
+                    if var2 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+                    assemblycode.append("LDA #" + str(symtab[filename][var2]))
+                    assemblycode.append("SUI " + str(var1))
+                    assemblycode.append("JNZ &&&" + str(ifs))
+                    ifs = ifs + 1
+                    location_counter = location_counter + optab["LDA"] + optab["SUI"] + optab["JNZ"]
+
+                # if a = 2
+                elif isint(var2):
+                    if var1 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+                    assemblycode.append("LDA #" + str(symtab[filename][var1]))
+                    assemblycode.append("SUI " + str(var2))
+                    assemblycode.append("JNZ &&&" + str(ifs))
+                    openifs = openifs + 1
+                    location_counter = location_counter + optab["LDA"] + optab["SUI"] + optab["JNZ"]
+                
+                # if a = b
+                else:
+                    if var2 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+                    if var1 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+                    assemblycode.append("LDA #" + str(symtab[filename][var2]))
+                    assemblycode.append("MOV B,A")
+                    assemblycode.append("LDA #" + str(symtab[filename][var1]))
+                    assemblycode.append("SUB B")
+                    assemblycode.append("JNZ &&&" + str(ifs))
+                    ifs = ifs + 1
+                    location_counter = location_counter + optab["LDA"] + optab["MOV"] + optab["LDA"] + optab["SUB"] + optab["JNZ"]
+            
+            # endif
+            elif reendif.match(line):
+                iftable[ifs - 1] = location_counter
 
         # all lines have been passed in pass1
         assemblycode.append(" END ")
@@ -430,5 +629,25 @@ def pass1(fileNames):
             assemblycode.append("='" + str(literal[0]) +"'" )
             location_counter = location_counter + 4
 
-        for i,code in enumerate(assemblycode):
-            print(assemblycode[i])
+        assemblycode = '\n'.join(assemblycode)
+        print(assemblycode)
+
+
+def pass2(pass1Code):
+    for line in pass1Code:
+        if "&&&" not in line and "!!!" not in line and "~~~" not in line:
+            assco.append(line)
+        elif "&&&" in line:
+            ifp = line.split("&&&")[1]
+            ifp = int(ifp)
+            line = line.replace("&&&"+line.split("&&&")[1], "#" + str(iftable[ifp]))
+            assco.append(line)
+        elif "!!!" in line:
+            fnp = line.split("!!!")[1]
+            fnp = int(fnp)
+            line = line.replace("!!!"+line.split("!!!")[1], "#" + str(fcalls[fnp]))
+            assco.append(line)
+        else:
+            jc = line.split("~~~")[1]
+            line = line.replace("~~~" + line.split("~~~")[1], str(symtab[filename][jc]))
+            assco.append(line)
