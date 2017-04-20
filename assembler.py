@@ -424,6 +424,93 @@ def pass1(fileNames):
                         "MOV"] + optab["MOV"] + optab["SUB"] + optab["JMP"] + optab["MOV"] + optab["STA"]
                         # if a < b 
 
+            # var 1= var 2 | var 3
+            elif reor.match(line):
+                var1 = reor.match(line).group(1)
+                var2 = reor.match(line).group(2)
+                var3 = reor.match(line).group(3)
+                if isint(var1) or var1 not in symtab[filename]:
+                    error = "Invalid line: " + line
+                    return
+
+                if isint(var2) and isint(var3):
+                    assemblycode.append("MVI A," + str(var2))
+                    assemblycode.append("ORI " + str(var3))
+                    assemblycode.append("STA " + str(symtab[filename][var1]))
+                    location_counter=location_counter +optab['MVI'] +optab['ORI'] +optab['STA']
+                elif isint(var2):
+                    if var3 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+                    assemblycode.append("LDA " + '#' + str(var3))
+                    assemblycode.append("ORI " + str(var2))
+                    assemblycode.append("STA " + '#' + str(var1))
+                    location_counter =location_counter + optab['LDA'] + optab['ORI']+ optab['STA']
+
+                elif isint(var3):
+                    if var2 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+                    assemblycode.append("LDA " + '#' + str(var2))
+                    assemblycode.append("ORI " + str(var3))
+                    assemblycode.append("STA " + '#' + str(var1))
+                    location_counter =location_counter + optab['LDA'] + optab['ORI']+ optab['STA']
+
+                else:
+                    if var2 not in symtab[filename] or var3 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+                    assemblycode.append("LDA " + ' # ' + str(var2))
+                    assemblycode.append("MOV B,A")
+                    assemblycode.append("LDA " + ' # ' + str(var3))
+                    assemblycode.append("ORA B")
+                    assemblycode.append("STA " + ' # ' + str(var1))
+                    location_counter =location_counter + optab['LDA'] + optab['MOV'] + optab['LDA']  + optab['ORA'] + optab['STA']
+
+
+            # var 1= var 2 & var 3
+            elif reand.match(line):
+                var1 = reand.match(line).group(1)
+                var2 = reand.match(line).group(2)
+                var3 = reand.match(line).group(3)
+                if isint(var1) or var1 not in symtab[filename]:
+                    error = "Invalid line: " + line
+                    return
+
+                if isint(var2) and isint(var3):
+                    assemblycode.append("MVI A," + str(var2))
+                    assemblycode.append("ANI " + str(var3))
+                    assemblycode.append("STA " + str(symtab[filename][var1]))
+                    location_counter=location_counter +optab['MVI'] +optab['ANI'] +optab['STA']
+                elif isint(var2):
+                    if var3 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+                    assemblycode.append("LDA " + '#' + str(var3))
+                    assemblycode.append("ANI " + str(var2))
+                    assemblycode.append("STA " + '#' + str(var1))
+                    location_counter =location_counter + optab['LDA'] + optab['ANI']+ optab['STA']
+
+                elif isint(var3):
+                    if var2 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+                    assemblycode.append("LDA " + '#' + str(var2))
+                    assemblycode.append("ANI " + str(var3))
+                    assemblycode.append("STA " + '#' + str(var1))
+                    location_counter =location_counter + optab['LDA'] + optab['ANI']+ optab['STA']
+
+                else:
+                    if var2 not in symtab[filename] or var3 not in symtab[filename]:
+                        error = "Invalid line: " + line
+                        return
+                    assemblycode.append("LDA " + ' # ' + str(var2))
+                    assemblycode.append("MOV B,A")
+                    assemblycode.append("LDA " + ' # ' + str(var3))
+                    assemblycode.append("ANA B")
+                    assemblycode.append("STA " + ' # ' + str(var1))
+                    location_counter =location_counter + optab['LDA'] + optab['MOV'] + optab['LDA']  + optab['ANA'] + optab['STA']
+            
             # if a < b 
             elif reiflt.match(line):
                 var1 = reiflt.match(line).group(1)
