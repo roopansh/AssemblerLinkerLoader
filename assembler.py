@@ -41,6 +41,7 @@ def pass1(fileNames):
     pooltab = []
     globtab = {}
     filelentable = {}
+    iftable = {}
     error = "False"
 
     findoptab()
@@ -70,7 +71,8 @@ def pass1(fileNames):
         pooltab_counter = 0
         location_counter = 0
         # update location counter in start statment.
-
+        ifs = 0
+        
         assemblycode = []
         symtab[filename] = {}
         littab[filename] = []
