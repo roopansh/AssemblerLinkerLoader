@@ -51,7 +51,11 @@ def pass1(fileNames):
     reminus = re.compile("\s*(\w+)\s*=\s*(\w+)\s*-\s*(\w+)\s*")
     remul = re.compile("\s*(\w+)\s*=\s*(\w+)\s*\*\s*(\w+)\s*")
     rediv = re.compile("\s*(\w+)\s*=\s*(\w+)\s*\/\s*(\w+)\s*")
-
+    reifgt = re.compile("\s*if\s+(\w+)\s*>\s*(\w+)\s*")
+    reifeq = re.compile("\s*if\s+(\w+)\s*=\s*(\w+)\s*")
+    reiflt = re.compile("\s*if\s+(\w+)\s*<\s*(\w+)\s*")
+    reendif = re.compile("\s*endif\s*")
+    
     reand = re.compile("\s*(\w+)\s*=\s*(\w+)\s*&\s*(\w+)\s*")
     reor = re.compile("\s*(\w+)\s*=\s*(\w+)\s*\|\s*(\w+)\s*")
 
