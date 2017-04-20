@@ -448,7 +448,7 @@ def pass1(fileNames):
                         return
                    
                     # ACC <-- b - 2
-                    assemblycode.append("LDA #" + str(symtab[filename][var2]))
+                    assemblycode.append("LDA #" + str(var2))
                     assemblycode.append("SUI " + str(var1))
                     # if SIGN BIT is 1 (negative)
                     assemblycode.append("JM &&&" + str(ifs))
@@ -464,7 +464,7 @@ def pass1(fileNames):
                         return
 
                     # ACC <-- a - 3
-                    assemblycode.append("LDA #" + str(symtab[filename][var1]))
+                    assemblycode.append("LDA #" + str(var1))
                     assemblycode.append("SUI " + str(var2))
                     # if SIGN BIT is 0 (positive)
                     assemblycode.append("JP &&&" + str(ifs))
@@ -483,9 +483,9 @@ def pass1(fileNames):
                         return
 
                     # ACC <-- a - b
-                    assemblycode.append("LDA #" + str(symtab[filename][var2]))
+                    assemblycode.append("LDA #" + str(var2))
                     assemblycode.append("MOV B,A")
-                    assemblycode.append("LDA #" + str(symtab[filename][var1]))
+                    assemblycode.append("LDA #" + str(var1))
                     # ACC <-- a - b
                     assemblycode.append("SUB B")
                     # if SIGN BIT is 0 (positive)
@@ -519,7 +519,7 @@ def pass1(fileNames):
                         return
 
                     # ACC <-- b - 3
-                    assemblycode.append("LDA #" + str(symtab[filename][var2]))
+                    assemblycode.append("LDA #" + str(var2))
                     assemblycode.append("SUI " + str(var1))
                     # if SIGN BIT is 0 (positive)
                     assemblycode.append("JP &&&" + str(ifs))
@@ -535,7 +535,7 @@ def pass1(fileNames):
                         return
 
                     # ACC <-- a - 2
-                    assemblycode.append("LDA #" + str(symtab[filename][var1]))
+                    assemblycode.append("LDA #" + str(var1))
                     assemblycode.append("SUI " + str(var2))
                     # if SIGN BIT is 1 (negative)
                     assemblycode.append("JM &&&" + str(ifs))
@@ -554,9 +554,9 @@ def pass1(fileNames):
                         return
 
                     # ACC <-- a - b
-                    assemblycode.append("LDA #" + str(symtab[filename][var2]))
+                    assemblycode.append("LDA #" + str(var2))
                     assemblycode.append("MOV B,A")
-                    assemblycode.append("LDA #" + str(symtab[filename][var1]))
+                    assemblycode.append("LDA #" + str(var1))
                     assemblycode.append("SUB B")
                     # if SIGN BIT is 0 (postive)
                     assemblycode.append("JM &&&" + str(ifs))
@@ -583,7 +583,7 @@ def pass1(fileNames):
                     if var2 not in symtab[filename]:
                         error = "Invalid line: " + line
                         return
-                    assemblycode.append("LDA #" + str(symtab[filename][var2]))
+                    assemblycode.append("LDA #" + str(var2))
                     assemblycode.append("SUI " + str(var1))
                     assemblycode.append("JNZ &&&" + str(ifs))
                     ifs = ifs + 1
@@ -594,7 +594,7 @@ def pass1(fileNames):
                     if var1 not in symtab[filename]:
                         error = "Invalid line: " + line
                         return
-                    assemblycode.append("LDA #" + str(symtab[filename][var1]))
+                    assemblycode.append("LDA #" + str(var1))
                     assemblycode.append("SUI " + str(var2))
                     assemblycode.append("JNZ &&&" + str(ifs))
                     openifs = openifs + 1
@@ -608,9 +608,9 @@ def pass1(fileNames):
                     if var1 not in symtab[filename]:
                         error = "Invalid line: " + line
                         return
-                    assemblycode.append("LDA #" + str(symtab[filename][var2]))
+                    assemblycode.append("LDA #" + str(var2))
                     assemblycode.append("MOV B,A")
-                    assemblycode.append("LDA #" + str(symtab[filename][var1]))
+                    assemblycode.append("LDA #" + str(var1))
                     assemblycode.append("SUB B")
                     assemblycode.append("JNZ &&&" + str(ifs))
                     ifs = ifs + 1

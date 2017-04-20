@@ -1,4 +1,5 @@
 var a=5
 var b=a
 var c=1
-a=15/5
+if a=b
+endif
