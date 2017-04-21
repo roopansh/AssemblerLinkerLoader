@@ -7,6 +7,7 @@ AUTHOR :-   Roopansh Bansal     150101053
 import re
 
 symtab = {}
+arraytab = {}
 optab = {}
 littab = {}
 pooltab = []
@@ -35,6 +36,7 @@ def pass1(fileNames):
     global optab
     global symtab
     global globtab
+    global arraytab
     global littab
     global pooltab
     global filelentable
@@ -43,6 +45,7 @@ def pass1(fileNames):
 
     optab = {}
     symtab = {}
+    arraytab[filename] = {}
     littab = {}
     pooltab = []
     globtab = {}
@@ -65,6 +68,9 @@ def pass1(fileNames):
     
     reand = re.compile("\s*(\w+)\s*=\s*(\w+)\s*&\s*(\w+)\s*")
     reor = re.compile("\s*(\w+)\s*=\s*(\w+)\s*\|\s*(\w+)\s*")
+
+    rearray = re.compile("\s*var\s+(\w+)\[(\w+)\]\s*")
+    reassarr = re.compile("\s*(\w+)\[(\w+)\]\s*=\s*(\w+)\s*")
 
     for filenam in fileNames:
         with open(filenam, 'r') as file:
@@ -744,6 +750,40 @@ def pass1(fileNames):
                 assemblycode.append("JNZ ~~~" + "loop" + str(loops - 1))
                 assemblycode.append("POP E")
                 location_counter = location_counter + optab["MOV"] + optab["SUI"] + optab["MOV"] + optab["JNZ"] + optab["POP"]
+    			
+    		# to initialise any array
+            elif rearray.match(line):
+                var = rearray.match(line).group(1)
+                lent = rearray.match(line).group(2)
+                if not isint(lent) or isint(var):
+                    error = "Invalid line: " + line
+                    return
+                arraytab[filename][var] =(location_counter,lent)
+
+            # to assign value to element of array.
+            elif reassarr.match(line):
+                name = reassarr.match(line).group(1)
+                disp = reassarr.match(line).group(2)
+                val = reassarr.match(line).group(3)
+                if name not in symtab[filename] or not isint(disp) or not (isint(val) or val not in symtab[filename]):
+                    error = "Invalid line: " + line
+                    return
+
+                if(isint(val)):
+                    assemblycode.append("MVI A," + str(val))
+                    assemblycode.append("STA " + ' # ' + str(name) + str(disp))
+                    location_counter= location_counter+ optab["MVI"] + optab["STA"]
+
+                else:
+                    assemblycode.append("LDA " + ' # ' + str(val))
+                    assemblycode.append("STA " + ' # ' + str(name) + str(disp))
+                    location_counter=location_counter + optab["LDA"] + optab["STA"]
+
+            # if line does not matches with any of the above line.
+            elif line.lstrip().rstrip() != "":
+                error = "Invalid line: " + line
+                return
+        
 
         # all lines have been passed in pass1
         assemblycode.append(" END ")
@@ -759,9 +799,17 @@ def pass1(fileNames):
 
             assemblycode.append("='" + str(literal[0]) +"'" )
             location_counter = location_counter + 4
-
+        
+        for array in arraytab[filename]:
+            assemblycode.append(str(array) + 'DS' + str(arraytab[filename][array][1]))
+            arraytab[filename][array][0] =location_counter
+            location_counter=location_counter + 4*arraytab[filename][array][1]
+    
         assemblycode = '\n'.join(assemblycode)
         print(assemblycode)
+
+        
+
 
 
 def pass2(pass1Code):
