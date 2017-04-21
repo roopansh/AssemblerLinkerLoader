@@ -1,3 +1,9 @@
+'''
+AUTHOR :-   Roopansh Bansal     150101053
+            Shivam Gupta        150101068
+            Shubham Singhal     150101072
+'''
+
 import re
 
 symtab = {}
