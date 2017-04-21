@@ -713,6 +713,38 @@ def pass1(fileNames):
             elif reendif.match(line):
                 iftable[ifs - 1] = location_counter
 
+            #loop
+            elif reloop.match(line):
+                var1 = reloop.match(line).group(1)
+
+                if not isint(var1) and var1 not in symtab[filename]:
+                    error = "Invalid line: " + line
+                    return
+                if isint(var1):
+                    assemblycode.append("PUSH E")
+                    assemblycode.append("MVI E," + str(var1))
+                    location_counter = location_counter + optab["PUSH"] + optab["MVI"]
+                    symtab[filename]["loop" + str(loops)] = "#" + str(location_counter)
+                    loops = loops + 1
+                else:
+                    assemblycode.append("PUSH E")
+                    assemblycode.append("LDA #" + str(var1))
+                    assemblycode.append("MOV E,A")
+                    location_counter = location_counter + optab["PUSH"] + optab["LDA"] + optab["MOV"]
+                    symtab[filename]["loop" + str(loops)] = "#" + str(location_counter)
+                    loops = loops + 1
+            #end loop
+            elif reendloop.match(line):
+                if loops == 0:
+                    error = "Invalid line: " + line
+                    return
+                assemblycode.append("MOV A,E")
+                assemblycode.append("SUI 1")
+                assemblycode.append("MOV E,A")
+                assemblycode.append("JNZ ~~~" + "loop" + str(loops - 1))
+                assemblycode.append("POP E")
+                location_counter = location_counter + optab["MOV"] + optab["SUI"] + optab["MOV"] + optab["JNZ"] + optab["POP"]
+
         # all lines have been passed in pass1
         assemblycode.append(" END ")
         for i,literal in enumerate(littab[filename]):
