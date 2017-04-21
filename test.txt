@@ -1,5 +1,4 @@
-var a=5
-var b=a
-var c=1
-if a=b
-endif
+var a= 5
+var c = 1
+var d = 5
+d = min((5),(10))
