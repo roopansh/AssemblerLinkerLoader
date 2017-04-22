@@ -141,13 +141,14 @@ def pass1(fileNames):
             if reglo.match(line):
                 var1 = reglo.match(line).group(1)
                 var2 = reglo.match(line).group(2)
-                print("file 2")
-                print(str(var1 )+ str(var2))
+                
                 if (not isint(var2) and var2 not in symtab[filename]) or isint(var1):
                     error = "Variable " + var2 + " not declared" + "in" + line
                     return
+                
                 if isint(var1):
                     error = "Expected variable" + "in" + line
+                
                 if isint(var2):
                     assemblycode.append("MVI R , ='" + str(var2) + "'")
                     assemblycode.append("MOV " + '$' + str(var1) +" , R")
@@ -1065,23 +1066,28 @@ def pass1(fileNames):
         pass2(filename)
 
 def pass2(filename):
-    # pass2  starts here
-    print("pass2 statrt *******************")
     assco = []
     for line in pass1code:
         print("line is : " + line)
+        # No special symbol in the line
         if "&&&" not in line and "!!!" not in line and "~~~" not in line and "#" not in line and "$" not in line :
             assco.append(line)
+        
+        # JMP statements for IF
         elif "&&&" in line:
             ifp = line.split("&&&")[1]
             ifp = int(ifp)
             line = line.replace("&&&" + line.split("&&&")[1], "@" + str(iftable[ifp]))
             assco.append(line)
+
+        # JMP statements for FUNCTION
         elif "!!!" in line:
             fnp = line.split("!!!")[1]
             fnp = int(fnp)
             line = line.replace("!!!" + line.split("!!!")[1], "@" + str(fcalls[fnp]))
             assco.append(line)
+
+        # Any Variable Name
         elif "#" in line:
             varp = line.split("#")[1]
             print(varp)
@@ -1091,6 +1097,8 @@ def pass2(filename):
             varpestripped = varpe.lstrip().rstrip()
             line = line.replace("#" + varpe, "@" + str(symtab[filename][varpestripped]))
             assco.append(line)
+
+        # Only when declaring Global Variables
         elif "$" in line:
             varp = line.split("$")[1]
             print(varp)
@@ -1100,6 +1108,8 @@ def pass2(filename):
             varpestripped = varpe.lstrip().rstrip()
             line = line.replace("$" + varpe, "@" + str(globtab[filename][varpestripped]))
             assco.append(line)
+        
+        # Call to Loops/Functions
         else:
             jc = line.split("~~~")[1]
             line = line.replace("~~~" + line.split("~~~")[1], str(symtab[filename][jc]))

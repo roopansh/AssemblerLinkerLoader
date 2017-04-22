@@ -15,13 +15,6 @@ def findfile(string, files):
             return file.split('.')[0], globtab[file.split('.')[0]][string].split("@")[1]
     return "Not found", "-1"
 
-
-# @ def findfunction(string, files):
-# @ 	for file in files:
-# @ 		if string in functions[file.split('.')[0]] and '@' in functions[file.split('.')[0]][string]:
-# @ 			return file.split('.')[0], functions[file.split('.')[0]][string].split("@")[1]
-# @ 	return "Not found", "-1"
-
 def link(fileNames):
     global error
     global startaddfile
@@ -45,8 +38,11 @@ def link(fileNames):
             file.close()
 
         for line in lines:
+            # No variables to link
             if '$' not in line and '@' not in line:
                 lincode.append(line)
+
+            # Unlinked local variables
             elif '@' in line:
                 addr = line.split('@')[1]
                 addrtmp = addr.split(',')[0]
@@ -54,6 +50,8 @@ def link(fileNames):
                 addr2 = str(int(addrtmp) + startaddfile[filename])
                 line = line.replace('@' + addrtmp, '@' + addr2)
                 lincode.append(line)
+
+            # Unlinked Global Variables
             elif '$' in line:
                 var = line.split('$')[1]
                 vara = var.split(',')[0]

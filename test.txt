@@ -1,5 +1,1 @@
-var a = 5
-function inca
-a = a + 1
-endfunction
-inca()
+global a = 5
