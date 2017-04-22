@@ -1066,10 +1066,11 @@ def pass1(fileNames):
 
 def pass2(filename):
     # pass2  starts here
+    print("pass2 statrt *******************")
     assco = []
     for line in pass1code:
         print("line is : " + line)
-        if "&&&" not in line and "!!!" not in line and "~~~" not in line and "#" not in line :
+        if "&&&" not in line and "!!!" not in line and "~~~" not in line and "#" not in line and "$" not in line :
             assco.append(line)
         elif "&&&" in line:
             ifp = line.split("&&&")[1]
@@ -1097,7 +1098,7 @@ def pass2(filename):
             print(varp[0])
             varpe = varp[0]
             varpestripped = varpe.lstrip().rstrip()
-            line = line.replace("$" + varpe, "@" + str(symtab[filename][varpestripped]))
+            line = line.replace("$" + varpe, "@" + str(globtab[filename][varpestripped]))
             assco.append(line)
         else:
             jc = line.split("~~~")[1]

@@ -1,5 +1,5 @@
 MVI R , ='10'
-MOV $a , R
+MOV @3, R
 END
 a DS 1
 ='10'
