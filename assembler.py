@@ -61,7 +61,8 @@ def pass1(fileNames):
     iftable = {}
     error = "False"
     pass1code = ''
-
+    vartab = {}
+        
     findoptab()
 
     '''
@@ -130,6 +131,7 @@ def pass1(fileNames):
         arraytab[filename] = {}
         littab[filename] = []
         globtab[filename] = {}
+        vartab[filename] = []
 
         for line in lines:
             line = line.lstrip().rstrip()
@@ -155,6 +157,7 @@ def pass1(fileNames):
                     assemblycode.append("LDA " + str(symtab[filename][var2]))
                     assemblycode.append("STA " + str(symtab[filename][var1]))
                     location_counter = location_counter + optab["JMP"] + optab["LDA"] + optab["STA"] + 1
+                vartab[filename].append(var1)
 
             elif revar.match(line):
                 var1 = revar.match(line).group(1)
@@ -166,8 +169,8 @@ def pass1(fileNames):
                 if isint(var1):
                     error = " Syntax error => Expected variable " + "in" + line
                 if isint(var2):
-                    assemblycode.append("MVI R ," + str(var2))
-                    assemblycode.append("MOV " + ' #' + str(var1) +" ,R")
+                    assemblycode.append("MVI R , ='" + str(var2) + "'")
+                    assemblycode.append("MOV " + '#' + str(var1) +" , R")
                     # push the symbol in symtab[filename] and current location counter just for now(will be updated in pass2
                     symtab[filename][var1] = location_counter
                     pooltab.append(pooltab_counter)
@@ -175,13 +178,13 @@ def pass1(fileNames):
                     littab[filename].append((var2, location_counter))
                     pooltab_counter = pooltab_counter + 1
                     location_counter = location_counter + optab['MVI'] + optab['MOV']
-
                 else:
                     assemblycode.append("MOV R," + ' #'  + str(var2))  # load to any register
                     assemblycode.append("MOV " + '#' + str(var1) + ' ,R ')  # load from that register
                     # push in symtab
                     symtab[filename][var1] = location_counter
                     location_counter = location_counter + optab['LDA'] + optab['STA']
+                vartab[filename].append(var1)
 
             elif replus.match(line):
                 # var1 =var2 +var3
@@ -827,7 +830,7 @@ def pass1(fileNames):
                 if not isint(lent) or isint(var):
                     error = "Invalid line: " + line
                     return
-                arraytab[filename][var] = (location_counter, lent)
+                arraytab[filename][var] = [location_counter, lent]
 
             elif refunction.match(line):
                 # directly jump. Come here only when function called
@@ -861,13 +864,13 @@ def pass1(fileNames):
                 name = reassarr.match(line).group(1)
                 disp = reassarr.match(line).group(2)
                 val = reassarr.match(line).group(3)
-                if name not in symtab[filename] or not isint(disp) or not (isint(val) or val not in symtab[filename]):
+                if ( name not in arraytab[filename] ) or ( not isint(disp) ) or not ( isint(val) or val in symtab[filename]):
                     error = "Invalid line: " + line
                     return
 
                 if (isint(val)):
                     assemblycode.append("MVI A," + str(val))
-                    assemblycode.append("STA " + ' #' + str(name) + " + " + str(disp))
+                    assemblycode.append("STA " + ' #' + str(name) + "+" + str(disp))
                     location_counter = location_counter + optab["MVI"] + optab["STA"]
 
                 else:
@@ -881,6 +884,7 @@ def pass1(fileNames):
                 return
             # minimum
             elif remin.match(line):
+                print("LKADJFLKAJDSFLJSDFLJLDSF")
                 var1 = remin.match(line).group(1)
                 vas = remin.match(line).group(2)
                 if isint(var1) or var1 not in symtab[filename]:
@@ -998,30 +1002,24 @@ def pass1(fileNames):
                 assemblycode.append("STA #" + str(var1))
                 location_counter = location_counter + optab["STA"]
 
-
-        assemblycode.append("STOP")
-
-        for variable in symtab[filename]:
-            assemblycode.append(str(variable) + " DS 1")
-
         # all lines have been passed in pass1
         assemblycode.append("END")
+
+        for var in vartab[filename]:
+            assemblycode.append(var + " DS 1")
+            symtab[filename][var] = location_counter
+            location_counter = location_counter + 4
+
         for i, literal in enumerate(littab[filename]):
             literal = (literal[0], location_counter)
             littab[filename][i] = literal
-            for var in symtab[filename]:
-                if (symtab[filename][var] == literal[1]):
-                    symtab[filename][var] = location_counter
-                    break
-
             assemblycode.append("='" + str(literal[0]) + "'")
             location_counter = location_counter + 4
 
-        print(arraytab)
         for array in arraytab[filename]:
-            assemblycode.append(str(array) + 'DS' + str(arraytab[filename][array][1]))
+            assemblycode.append(str(array) + ' DS ' + str(arraytab[filename][array][1]))
             arraytab[filename][array][0] = location_counter
-            location_counter = location_counter + 4 * arraytab[filename][array][1]
+            location_counter = location_counter + 4*int(arraytab[filename][array][1])
 
         assemblycodelines = '\n'.join(assemblycode)
         print(assemblycodelines)
@@ -1068,4 +1066,5 @@ def pass1(fileNames):
         # print(assco)
 
 pass1(['test.txt'])
-# print(error)
+if not error == "False" :
+    print(error)
