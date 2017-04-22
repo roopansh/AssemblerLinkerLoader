@@ -1,0 +1,5 @@
+MVI R , ='20'
+MOV #b , R
+END
+b DS 1
+='20'

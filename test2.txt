@@ -1,0 +1,2 @@
+extern a
+var b = 20

@@ -45,7 +45,7 @@ def pass1(fileNames):
     global arraytab
     global littab
     global pooltab
-    global filelentable
+    global filelentab
     global location_counter
     global pooltab_counter
     global function_counter
@@ -57,7 +57,7 @@ def pass1(fileNames):
     littab = {}
     pooltab = []
     globtab = {}
-    filelentable = {}
+    filelentab = {}
     iftable = {}
     error = "False"
     pass1code = ''
@@ -71,8 +71,9 @@ def pass1(fileNames):
 
     # Variable declartions
     revar = re.compile("var\s+(\w+)\s*=\s*(\w+)\s*")
-    reglo = re.compile("global\s+var\s+(\w+)\s*=\s*(\w+)\s*")
-    
+    reglo = re.compile("global\s+(\w+)\s*=\s*(\w+)\s*")
+    reext = re.compile("extern\s+(\w+)\s*")
+
     # Arithmatic
     replus = re.compile("\s*(\w+)\s*=\s*(\w+)\s*\+\s*(\w+)\s*")
     reminus = re.compile("\s*(\w+)\s*=\s*(\w+)\s*-\s*(\w+)\s*")
@@ -101,6 +102,7 @@ def pass1(fileNames):
     refunction = re.compile("\s*function\s+(\w+)\s*")
     renfun = re.compile("\s*endfunction\s*")
     recall = re.compile("\s*(\w+)\(\)")
+    reextf = re.compile("\s*extern\s+function\s+(\w+)\(\)\s*")
 
     # Min/Max
     # a = min(b,c,5,7,e)
@@ -139,24 +141,30 @@ def pass1(fileNames):
             if reglo.match(line):
                 var1 = reglo.match(line).group(1)
                 var2 = reglo.match(line).group(2)
+                print("file 2")
+                print(str(var1 )+ str(var2))
                 if (not isint(var2) and var2 not in symtab[filename]) or isint(var1):
                     error = "Variable " + var2 + " not declared" + "in" + line
                     return
                 if isint(var1):
                     error = "Expected variable" + "in" + line
                 if isint(var2):
-                    assemblycode.append("JMP #" + str(location_counter + 4))
-                    assemblycode.append("DB " + str(var2))
-                    symtab[filename][var1] = "#" + str(location_counter + 3)
-                    globtab[filename][var1] = "#" + str(location_counter + 3)
-                    location_counter = location_counter + optab["JMP"] + 1
+                    assemblycode.append("MVI R , ='" + str(var2) + "'")
+                    assemblycode.append("MOV " + '$' + str(var1) +" , R")
+                    # push the symbol in symtab[filename] and current location counter just for now(will be updated in pass2
+                    symtab[filename][var1] = location_counter
+                    globtab[filename][var1] = location_counter
+                    pooltab.append(pooltab_counter)
+                    # push in pooltab and in liitab[filename] with value and location counter(just for now)
+                    littab[filename].append((var2, location_counter))
+                    pooltab_counter = pooltab_counter + 1
+                    location_counter = location_counter + optab['MVI'] + optab['MOV']
                 else:
-                    assemblycode.append("JMP #" + str(location_counter + 4))
-                    symtab[filename][var1] = "#" + str(location_counter + 3)
-                    globtab[filename][var1] = "#" + str(location_counter + 3)
-                    assemblycode.append("LDA " + str(symtab[filename][var2]))
-                    assemblycode.append("STA " + str(symtab[filename][var1]))
-                    location_counter = location_counter + optab["JMP"] + optab["LDA"] + optab["STA"] + 1
+                    assemblycode.append("MOV R," + ' #'  + str(var2))  # load to any register
+                    assemblycode.append("MOV " + '$' + str(var1) + ' ,R ')  # load from that register
+                    # push in symtab
+                    symtab[filename][var1] = location_counter
+                    location_counter = location_counter + optab['LDA'] + optab['STA']
                 vartab[filename].append(var1)
 
             elif revar.match(line):
@@ -168,6 +176,7 @@ def pass1(fileNames):
                     return
                 if isint(var1):
                     error = " Syntax error => Expected variable " + "in" + line
+                    return
                 if isint(var2):
                     assemblycode.append("MVI R , ='" + str(var2) + "'")
                     assemblycode.append("MOV " + '#' + str(var1) +" , R")
@@ -186,6 +195,15 @@ def pass1(fileNames):
                     location_counter = location_counter + optab['LDA'] + optab['STA']
                 vartab[filename].append(var1)
 
+            elif reext.match(line):
+                var = reext.match(line).group(1)
+                if isint(var):
+                    error = "Expected variable in " + line
+                    return
+                # symtable[filename][var] = str(var)
+            elif reextf.match(line):
+                fname = reextf.match(line).group(1)
+                symtable[filename][fname] = "$" + str(fname)
             elif replus.match(line):
                 # var1 =var2 +var3
                 var1 = replus.match(line).group(1)
@@ -1001,12 +1019,15 @@ def pass1(fileNames):
                 assemblycode.append("STA #" + str(var1))
                 location_counter = location_counter + optab["STA"]
 
+        filelentab[filename] = location_counter
         # all lines have been passed in pass1
         assemblycode.append("END")
 
         for var in vartab[filename]:
             assemblycode.append(var + " DS 1")
             symtab[filename][var] = location_counter
+            if var in globtab[filename]:
+                globtab[filename][var] = location_counter
             location_counter = location_counter + 4
 
         for i, literal in enumerate(littab[filename]):
@@ -1020,49 +1041,78 @@ def pass1(fileNames):
             arraytab[filename][array][0] = location_counter
             location_counter = location_counter + 4*int(arraytab[filename][array][1])
 
-        assemblycodelines = '\n'.join(assemblycode)
-        print(assemblycodelines)
+        assemblycode1lines = '\n'.join(assemblycode)
+        print(assemblycode1lines)
         pass1code = assemblycode
 
+        with open(filename+".pass1", "w") as file:
+            file.write(assemblycode1lines)
+            file.close()
 
-        # print(symtab)
-        # print(littab)
-        # print(iftable)
-        # print(funtab)
-        # print(arraytab)
-        # print(pooltab)
+        print("symtable : ")
+        print(symtab)
+        print("littable : " )
+        print(littab)
+        print("iftable : ")
+        print(iftable)
+        print("funtab : ")
+        print(funtab)
+        print("arraytab : ")
+        print(arraytab)
+        print("pooltab : ")
+        print(pooltab)
 
-        #pass2  starts here
-        # assco = []
-        # for line in pass1code:
-        #     print("line is : " + line)
-        #     if "&&&" not in line and "!!!" not in line and "~~~" not in line and "#" not in line :
-        #         assco.append(line)
-        #     elif "&&&" in line:
-        #         ifp = line.split("&&&")[1]
-        #         ifp = int(ifp)
-        #         line = line.replace("&&&" + line.split("&&&")[1], "@" + str(iftable[ifp]))
-        #         assco.append(line)
-        #     elif "!!!" in line:
-        #         fnp = line.split("!!!")[1]
-        #         fnp = int(fnp)
-        #         line = line.replace("!!!" + line.split("!!!")[1], "@" + str(fcalls[fnp]))
-        #         assco.append(line)
-        #     elif "#" in line:
-        #         varp = line.split("#")[1]
-        #         print(varp)
-        #         varp = varp.split(',')
-        #         print(varp[0])
-        #         varpe = varp[0]
-        #         varpestripped = varpe.lstrip().rstrip()
-        #         line = line.replace("#" + varpe, "@" + str(symtab[filename][varpestripped]))
-        #         assco.append(line)
-        #     else:
-        #         jc = line.split("~~~")[1]
-        #         line = line.replace("~~~" + line.split("~~~")[1], str(symtab[filename][jc]))
-        #         assco.append(line)
-        # print(assco)
+        pass2(filename)
 
-pass1(['test.txt'])
+def pass2(filename):
+    # pass2  starts here
+    assco = []
+    for line in pass1code:
+        print("line is : " + line)
+        if "&&&" not in line and "!!!" not in line and "~~~" not in line and "#" not in line :
+            assco.append(line)
+        elif "&&&" in line:
+            ifp = line.split("&&&")[1]
+            ifp = int(ifp)
+            line = line.replace("&&&" + line.split("&&&")[1], "@" + str(iftable[ifp]))
+            assco.append(line)
+        elif "!!!" in line:
+            fnp = line.split("!!!")[1]
+            fnp = int(fnp)
+            line = line.replace("!!!" + line.split("!!!")[1], "@" + str(fcalls[fnp]))
+            assco.append(line)
+        elif "#" in line:
+            varp = line.split("#")[1]
+            print(varp)
+            varp = varp.split(',')
+            print(varp[0])
+            varpe = varp[0]
+            varpestripped = varpe.lstrip().rstrip()
+            line = line.replace("#" + varpe, "@" + str(symtab[filename][varpestripped]))
+            assco.append(line)
+        elif "$" in line:
+            varp = line.split("$")[1]
+            print(varp)
+            varp = varp.split(',')
+            print(varp[0])
+            varpe = varp[0]
+            varpestripped = varpe.lstrip().rstrip()
+            line = line.replace("$" + varpe, "@" + str(symtab[filename][varpestripped]))
+            assco.append(line)
+        else:
+            jc = line.split("~~~")[1]
+            line = line.replace("~~~" + line.split("~~~")[1], str(symtab[filename][jc]))
+            assco.append(line)
+
+    assemblycode2lines = '\n'.join(assco)
+    print(assemblycode2lines)
+    print(assco)
+
+    with open(filename + ".pass2", "w") as file:
+        file.write(assemblycode2lines)
+        file.close()
+
+# fileNames
+pass1(['test1.txt','test2.txt'])
 if not error == "False" :
     print(error)

@@ -1,0 +1,5 @@
+MVI R , ='10'
+MOV $a , R
+END
+a DS 1
+='10'
