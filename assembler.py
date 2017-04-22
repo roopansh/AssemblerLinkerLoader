@@ -998,13 +998,17 @@ def pass1(fileNames):
                 assemblycode.append("STA #" + str(var1))
                 location_counter = location_counter + optab["STA"]
 
-        # all lines have been passed in pass1
-        assemblycode.append(" END ")
-        for i, literal in enumerate(littab[filename]):
 
+        assemblycode.append("STOP")
+
+        for variable in symtab[filename]:
+            assemblycode.append(str(variable) + " DS 1")
+
+        # all lines have been passed in pass1
+        assemblycode.append("END")
+        for i, literal in enumerate(littab[filename]):
             literal = (literal[0], location_counter)
             littab[filename][i] = literal
-
             for var in symtab[filename]:
                 if (symtab[filename][var] == literal[1]):
                     symtab[filename][var] = location_counter
@@ -1018,10 +1022,9 @@ def pass1(fileNames):
             assemblycode.append(str(array) + 'DS' + str(arraytab[filename][array][1]))
             arraytab[filename][array][0] = location_counter
             location_counter = location_counter + 4 * arraytab[filename][array][1]
-            print(array)
 
         assemblycodelines = '\n'.join(assemblycode)
-        # print(assemblycodelines)
+        print(assemblycodelines)
 
         pass1code = assemblycode
 
