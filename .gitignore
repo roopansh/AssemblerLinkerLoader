@@ -1,3 +1,7 @@
 # pyc files
 __pycache__/
 *.pyc
+
+# passes files
+*.pass1
+*.pass2
