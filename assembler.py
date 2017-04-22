@@ -64,31 +64,44 @@ def pass1(fileNames):
 
     findoptab()
 
-    # regular expressions
+    '''
+    REGULAR EXPRESSIONS
+    '''
+
+    # Variable declartions
     revar = re.compile("var\s+(\w+)\s*=\s*(\w+)\s*")
     reglo = re.compile("global\s+var\s+(\w+)\s*=\s*(\w+)\s*")
+    
+    # Arithmatic
     replus = re.compile("\s*(\w+)\s*=\s*(\w+)\s*\+\s*(\w+)\s*")
     reminus = re.compile("\s*(\w+)\s*=\s*(\w+)\s*-\s*(\w+)\s*")
     remul = re.compile("\s*(\w+)\s*=\s*(\w+)\s*\*\s*(\w+)\s*")
     rediv = re.compile("\s*(\w+)\s*=\s*(\w+)\s*\/\s*(\w+)\s*")
+    
+    # If Blocks
     reifgt = re.compile("\s*if\s+(\w+)\s*>\s*(\w+)\s*")
     reifeq = re.compile("\s*if\s+(\w+)\s*=\s*(\w+)\s*")
     reiflt = re.compile("\s*if\s+(\w+)\s*<\s*(\w+)\s*")
     reendif = re.compile("\s*endif\s*")
 
+    # Bitwise AND/OR
     reand = re.compile("\s*(\w+)\s*=\s*(\w+)\s*&\s*(\w+)\s*")
     reor = re.compile("\s*(\w+)\s*=\s*(\w+)\s*\|\s*(\w+)\s*")
 
+    # Array
     rearray = re.compile("\s*var\s+(\w+)\[(\w+)\]\s*")
     reassarr = re.compile("\s*(\w+)\[(\w+)\]\s*=\s*(\w+)\s*")
 
+    # Loops
     reloop = re.compile("\s*loop\s+(\w+)\s*")
     reendloop = re.compile("\s*endloop\s*")
 
+    # Functions
     refunction = re.compile("\s*function\s+(\w+)\s*")
     renfun = re.compile("\s*endfunction\s*")
     recall = re.compile("\s*(\w+)\(\)")
 
+    # Min/Max
     # a = min(b,c,5,7,e)
     remin = re.compile("\s*(\w+)\s*=\s*min\s*\((.*)\)\s*")
     # a = max(b,c,5,7,e)
@@ -823,7 +836,7 @@ def pass1(fileNames):
                 name = refunction.match(line).group(1)
                 globtable[filename][name] = "#" + str(location_counter)
                 # save into symbol address as while calling we would be needing that
-                symtable[filename][name] = "#" + str(location_counter)
+                symtab[filename][name] = "#" + str(location_counter)
                 fnc = fnc + 1
 
             elif renfun.match(line):
@@ -836,7 +849,7 @@ def pass1(fileNames):
             elif recall.match(line):
                 # naame of function
                 name = recall.match(line).group(1)
-                if name not in symtable[filename]:
+                if name not in symtab[filename]:
                     error = "Function " + name + " not declared in " + line
                     return
                 # check it's address in the symbol table(in pass 2 it would nbe available ) and jump there
@@ -1000,56 +1013,56 @@ def pass1(fileNames):
             assemblycode.append("='" + str(literal[0]) + "'")
             location_counter = location_counter + 4
 
-        print(assemblycode)
-
+        print(arraytab)
         for array in arraytab[filename]:
             assemblycode.append(str(array) + 'DS' + str(arraytab[filename][array][1]))
             arraytab[filename][array][0] = location_counter
             location_counter = location_counter + 4 * arraytab[filename][array][1]
+            print(array)
 
         assemblycodelines = '\n'.join(assemblycode)
-        print(assemblycodelines)
+        # print(assemblycodelines)
 
         pass1code = assemblycode
 
 
-        print(symtab)
-        print(littab)
-        print(iftable)
-        print(funtab)
-        print(arraytab)
-        print(pooltab)
+        # print(symtab)
+        # print(littab)
+        # print(iftable)
+        # print(funtab)
+        # print(arraytab)
+        # print(pooltab)
 
         #pass2  starts here
-        assco = []
-        for line in pass1code:
-            print("line is : " + line)
-            if "&&&" not in line and "!!!" not in line and "~~~" not in line and "#" not in line :
-                assco.append(line)
-            elif "&&&" in line:
-                ifp = line.split("&&&")[1]
-                ifp = int(ifp)
-                line = line.replace("&&&" + line.split("&&&")[1], "@" + str(iftable[ifp]))
-                assco.append(line)
-            elif "!!!" in line:
-                fnp = line.split("!!!")[1]
-                fnp = int(fnp)
-                line = line.replace("!!!" + line.split("!!!")[1], "@" + str(fcalls[fnp]))
-                assco.append(line)
-            elif "#" in line:
-                varp = line.split("#")[1]
-                print(varp)
-                varp = varp.split(',')
-                print(varp[0])
-                varpe = varp[0]
-                varpestripped = varpe.lstrip().rstrip()
-                line = line.replace("#" + varpe, "@" + str(symtab[filename][varpestripped]))
-                assco.append(line)
-            else:
-                jc = line.split("~~~")[1]
-                line = line.replace("~~~" + line.split("~~~")[1], str(symtab[filename][jc]))
-                assco.append(line)
-        print(assco)
+        # assco = []
+        # for line in pass1code:
+        #     print("line is : " + line)
+        #     if "&&&" not in line and "!!!" not in line and "~~~" not in line and "#" not in line :
+        #         assco.append(line)
+        #     elif "&&&" in line:
+        #         ifp = line.split("&&&")[1]
+        #         ifp = int(ifp)
+        #         line = line.replace("&&&" + line.split("&&&")[1], "@" + str(iftable[ifp]))
+        #         assco.append(line)
+        #     elif "!!!" in line:
+        #         fnp = line.split("!!!")[1]
+        #         fnp = int(fnp)
+        #         line = line.replace("!!!" + line.split("!!!")[1], "@" + str(fcalls[fnp]))
+        #         assco.append(line)
+        #     elif "#" in line:
+        #         varp = line.split("#")[1]
+        #         print(varp)
+        #         varp = varp.split(',')
+        #         print(varp[0])
+        #         varpe = varp[0]
+        #         varpestripped = varpe.lstrip().rstrip()
+        #         line = line.replace("#" + varpe, "@" + str(symtab[filename][varpestripped]))
+        #         assco.append(line)
+        #     else:
+        #         jc = line.split("~~~")[1]
+        #         line = line.replace("~~~" + line.split("~~~")[1], str(symtab[filename][jc]))
+        #         assco.append(line)
+        # print(assco)
 
 pass1(['test.txt'])
-print(error)
+# print(error)
