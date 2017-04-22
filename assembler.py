@@ -110,6 +110,11 @@ def pass1(fileNames):
     # a = max(b,c,5,7,e)
     remax = re.compile("\s*(\w+)\s*=\s*max\s*\((.*)\)\s*")
 
+    # to implement goto statements
+    # jump for jump statement and tag to define that address
+    rejump = re.compile("\s*JUMP\s+(\w+)\s*")
+	retag = re.compile("\s*(\w+)[:]\s*")
+
     for filenam in fileNames:
         with open(filenam, 'r') as file:
             code = file.read()
@@ -201,11 +206,11 @@ def pass1(fileNames):
                 if isint(var):
                     error = "Expected variable in " + line
                     return
-                symtable[filename][var] = "$" + str(var)
+                symtab[filename][var] = "$" + str(var)
 
             elif reextf.match(line):
                 fname = reextf.match(line).group(1)
-                symtable[filename][fname] = "$" + str(fname)
+                symtab[filename][fname] = "$" + str(fname)
 
             elif replus.match(line):
                 # var1 =var2 +var3
@@ -899,10 +904,7 @@ def pass1(fileNames):
                     assemblycode.append("STA " + ' #' + str(name) + " + " + str(disp))
                     location_counter = location_counter + optab["LDA"] + optab["STA"]
 
-            # if line does not matches with any of the above line.
-            elif line.lstrip().rstrip() != "":
-                error = "Invalid line: " + line
-                return
+            
             # minimum
             elif remin.match(line):
                 var1 = remin.match(line).group(1)
@@ -1021,6 +1023,23 @@ def pass1(fileNames):
                                                "MOV"]
                 assemblycode.append("STA #" + str(var1))
                 location_counter = location_counter + optab["STA"]
+			
+			# if line does not matches with any of the above line.
+            elif line.lstrip().rstrip() != "":
+                error = "Invalid line: " + line
+                return
+
+            # to implement jump statement
+        	elif rejump.match(line):
+				loc = rejump.match(line).group(1)
+				assemblycode.append("JMP ~~~" + str(loc))
+				location_counter =location_counter + optab["JMP"]
+			
+			# to define tag at given memory address
+			elif retag.match(line):
+				loc = retag.match(line).group(1)
+				symtab[filename][loc] = "#" + str(location_counter)
+
 
         filelentab[filename] = location_counter
         # all lines have been passed in pass1
