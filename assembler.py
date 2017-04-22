@@ -120,7 +120,6 @@ def pass1(fileNames):
         pooltab_counter = 0
         location_counter = 0
         function_counter = 0
-        fnc = 0
 
         # update location counter in start statment.
         ifs = 0
@@ -132,6 +131,7 @@ def pass1(fileNames):
         littab[filename] = []
         globtab[filename] = {}
         vartab[filename] = []
+        fcalls = {}
 
         for line in lines:
             line = line.lstrip().rstrip()
@@ -834,30 +834,30 @@ def pass1(fileNames):
 
             elif refunction.match(line):
                 # directly jump. Come here only when function called
-                assemblycode.append("JMP !!!" + str(fnc))
-                location_counter = location_counter + optable["JMP"]
+                assemblycode.append("JMP !!!" + str(function_counter))
+                location_counter = location_counter + optab["JMP"]
                 name = refunction.match(line).group(1)
-                globtable[filename][name] = "#" + str(location_counter)
+                globtab[filename][name] = location_counter
                 # save into symbol address as while calling we would be needing that
-                symtab[filename][name] = "#" + str(location_counter)
-                fnc = fnc + 1
+                symtab[filename][name] = location_counter
+                function_counter = function_counter + 1
 
             elif renfun.match(line):
                 # return top of stack
                 assemblycode.append("RET")
-                location_counter = location_counter + optable["RET"]
+                location_counter = location_counter + optab["RET"]
                 # save the ending of function so that we can know where to jump when function is defined
-                fcalls[fnc - 1] = location_counter
+                fcalls[function_counter - 1] = location_counter
 
             elif recall.match(line):
-                # naame of function
+                # name of function
                 name = recall.match(line).group(1)
                 if name not in symtab[filename]:
                     error = "Function " + name + " not declared in " + line
                     return
-                # check it's address in the symbol table(in pass 2 it would nbe available ) and jump there
+                # check it's address in the symbol table(in pass 2 it would be available ) and jump there
                 assemblycode.append("CALL ~~~" + name)
-                location_counter = location_counter + optable["CALL"]
+                location_counter = location_counter + optab["CALL"]
 
             # to assign value to element of array.
             elif reassarr.match(line):
@@ -884,7 +884,6 @@ def pass1(fileNames):
                 return
             # minimum
             elif remin.match(line):
-                print("LKADJFLKAJDSFLJSDFLJLDSF")
                 var1 = remin.match(line).group(1)
                 vas = remin.match(line).group(2)
                 if isint(var1) or var1 not in symtab[filename]:
@@ -1023,7 +1022,6 @@ def pass1(fileNames):
 
         assemblycodelines = '\n'.join(assemblycode)
         print(assemblycodelines)
-
         pass1code = assemblycode
 
 
