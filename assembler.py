@@ -110,6 +110,11 @@ def pass1(fileNames):
     # a = max(b,c,5,7,e)
     remax = re.compile("\s*(\w+)\s*=\s*max\s*\((.*)\)\s*")
 
+    # to implement goto statements
+    # jump for jump statement and tag to define that address
+    rejump = re.compile("\s*JUMP\s+(\w+)\s*")
+    retag = re.compile("\s*(\w+)[:]\s*")
+
     for filenam in fileNames:
         with open(filenam, 'r') as file:
             code = file.read()
@@ -1022,6 +1027,21 @@ def pass1(fileNames):
                 assemblycode.append("STA #" + str(var1))
                 location_counter = location_counter + optab["STA"]
 
+            elif rejump.match(line):
+                loc = rejump.match(line).group(1)
+                assemblycode.append("JMP ~~~" + str(loc))
+                location_counter =location_counter + optab["JMP"]
+
+            elif retag.match(line):
+                loc = retag.match(line).group(1)
+                symtab[filename][loc] = "#" + str(location_counter)
+
+            # if line does not matches with any of the above line.
+            elif line.lstrip().rstrip() != "":
+                error = "Invalid line: " + line
+                return
+
+
         filelentab[filename] = location_counter
         # all lines have been passed in pass1
         assemblycode.append("END")
@@ -1052,19 +1072,6 @@ def pass1(fileNames):
         with open(filename+".pass1", "w") as file:
             file.write(assemblycode1lines)
             file.close()
-
-        # print("symtable : ")
-        # print(symtab)
-        # print("littable : " )
-        # print(littab)
-        # print("iftable : ")
-        # print(iftable)
-        # print("funtab : ")
-        # print(funtab)
-        # print("arraytab : ")
-        # print(arraytab)
-        # print("pooltab : ")
-        # print(pooltab)
 
         pass2(filename)
 

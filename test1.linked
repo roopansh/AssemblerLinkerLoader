@@ -1,0 +1,10 @@
+MVI R , ='10'
+MOV @3, R
+END
+a DS 1
+='10'
+MVI R , ='20'
+MOV @6, R
+END
+b DS 1
+='20'
