@@ -36,7 +36,7 @@ def link(fileNames):
         with open(filename + '.pass2', 'r') as file:
             lines = file.read().split('\n')
             file.close()
-
+        print("Linker start -------------------------------------------------------------")
         for line in lines:
             # No variables to link
             if '$' not in line and '@' not in line:
@@ -46,7 +46,7 @@ def link(fileNames):
             elif '@' in line:
                 addr = line.split('@')[1]
                 addrtmp = addr.split(',')[0]
-                print(addr1[0])
+                # print(addr1[0])
                 addr2 = str(int(addrtmp) + startaddfile[filename])
                 line = line.replace('@' + addrtmp, '@' + addr2)
                 lincode.append(line)
@@ -56,13 +56,16 @@ def link(fileNames):
                 var = line.split('$')[1]
                 vara = var.split(',')[0]
                 # fname, add = findfile(line.split('$')[1], fileNames)
-                fname, add = findfile(vara, fileNames)
+                fname, add = findfile(var, fileNames)
                 if fname == "Not found":
-                    error = "External variable " + line.split('$')[1] + " not found: " + line
-                    return
+                	error = "External variable " + line.split('$')[1] + " not found: " + line
+                	return
                 line = line.replace('$' + vara, "@" + str(int(add) + startaddfile[fname]))
-            lincode.append(line)
+                lincode.append(line)
 
-        with open(fileNames[0].split('.')[0] + '.linked', 'w') as file:
-            file.write("\n".join(lincode))
-            file.close()
+            print(line)
+    with open(fileNames[0].split('.')[0] + '.linked', 'w') as file:
+        file.write("\n".join(lincode))
+        file.close()
+
+link(['test1.txt','test2.txt',])

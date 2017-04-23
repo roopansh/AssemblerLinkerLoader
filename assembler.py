@@ -110,11 +110,6 @@ def pass1(fileNames):
     # a = max(b,c,5,7,e)
     remax = re.compile("\s*(\w+)\s*=\s*max\s*\((.*)\)\s*")
 
-    # to implement goto statements
-    # jump for jump statement and tag to define that address
-    rejump = re.compile("\s*JUMP\s+(\w+)\s*")
-	retag = re.compile("\s*(\w+)[:]\s*")
-
     for filenam in fileNames:
         with open(filenam, 'r') as file:
             code = file.read()
@@ -156,10 +151,10 @@ def pass1(fileNames):
                 
                 if isint(var2):
                     assemblycode.append("MVI R , ='" + str(var2) + "'")
-                    assemblycode.append("MOV " + '$' + str(var1) +" , R")
+                    assemblycode.append("MOV " + '#' + str(var1) +" , R")
                     # push the symbol in symtab[filename] and current location counter just for now(will be updated in pass2
-                    symtab[filename][var1] ='$' + str(location_counter)
-                    globtab[filename][var1] ='$' + str(location_counter)
+                    symtab[filename][var1] ='#' + str(location_counter)
+                    globtab[filename][var1] ='#' + str(location_counter)
                     pooltab.append(pooltab_counter)
                     # push in pooltab and in liitab[filename] with value and location counter(just for now)
                     littab[filename].append((var2,globtab[filename][var1]))
@@ -167,9 +162,9 @@ def pass1(fileNames):
                     location_counter = location_counter + optab['MVI'] + optab['MOV']
                 else:
                     assemblycode.append("MOV R," + '#'  + str(var2))  # load to any register
-                    assemblycode.append("MOV " + '$' + str(var1) + ' ,R ')  # load from that register
+                    assemblycode.append("MOV " + '#' + str(var1) + ' ,R ')  # load from that register
                     # push in symtab
-                    symtab[filename][var1] = '$' + str(location_counter)
+                    symtab[filename][var1] = '#' + str(location_counter)
                     location_counter = location_counter + optab['LDA'] + optab['STA']
                 vartab[filename].append(var1)
 
@@ -904,7 +899,10 @@ def pass1(fileNames):
                     assemblycode.append("STA " + ' #' + str(name) + " + " + str(disp))
                     location_counter = location_counter + optab["LDA"] + optab["STA"]
 
-            
+            # if line does not matches with any of the above line.
+            elif line.lstrip().rstrip() != "":
+                error = "Invalid line: " + line
+                return
             # minimum
             elif remin.match(line):
                 var1 = remin.match(line).group(1)
@@ -1023,23 +1021,6 @@ def pass1(fileNames):
                                                "MOV"]
                 assemblycode.append("STA #" + str(var1))
                 location_counter = location_counter + optab["STA"]
-			
-			# if line does not matches with any of the above line.
-            elif line.lstrip().rstrip() != "":
-                error = "Invalid line: " + line
-                return
-
-            # to implement jump statement
-        	elif rejump.match(line):
-				loc = rejump.match(line).group(1)
-				assemblycode.append("JMP ~~~" + str(loc))
-				location_counter =location_counter + optab["JMP"]
-			
-			# to define tag at given memory address
-			elif retag.match(line):
-				loc = retag.match(line).group(1)
-				symtab[filename][loc] = "#" + str(location_counter)
-
 
         filelentab[filename] = location_counter
         # all lines have been passed in pass1
@@ -1064,6 +1045,7 @@ def pass1(fileNames):
             location_counter = location_counter + 4*int(arraytab[filename][array][1])
 
         assemblycode1lines = '\n'.join(assemblycode)
+        print("assembly pass 1 : ")
         print(assemblycode1lines)
         pass1code = assemblycode
 
@@ -1071,25 +1053,25 @@ def pass1(fileNames):
             file.write(assemblycode1lines)
             file.close()
 
-        print("symtable : ")
-        print(symtab)
-        print("littable : " )
-        print(littab)
-        print("iftable : ")
-        print(iftable)
-        print("funtab : ")
-        print(funtab)
-        print("arraytab : ")
-        print(arraytab)
-        print("pooltab : ")
-        print(pooltab)
+        # print("symtable : ")
+        # print(symtab)
+        # print("littable : " )
+        # print(littab)
+        # print("iftable : ")
+        # print(iftable)
+        # print("funtab : ")
+        # print(funtab)
+        # print("arraytab : ")
+        # print(arraytab)
+        # print("pooltab : ")
+        # print(pooltab)
 
         pass2(filename)
 
 def pass2(filename):
     assco = []
     for line in pass1code:
-        print("line is : " + line)
+        # print("line is : " + line)
         # No special symbol in the line
         if "&&&" not in line and "!!!" not in line and "~~~" not in line and "#" not in line and "$" not in line :
             assco.append(line)
@@ -1111,26 +1093,30 @@ def pass2(filename):
         # Any Variable Name
         elif "#" in line:
             varp = line.split("#")[1]
-            print(varp)
+            # print(varp)
             varp = varp.split(',')
-            print(varp[0])
+            # print(varp[0])
             varpe = varp[0]
             varpestripped = varpe.lstrip().rstrip()
+            # print("+++++++++++++++++++++++++++")
+            # print(symtab[filename][varpestripped].strip('#'))
             if(varpestripped in symtab[filename]):
-                line = line.replace("#" + varpe, "@" + str(symtab[filename][varpestripped]))
+                line = line.replace("#" + varpe, "@" + str(symtab[filename][varpestripped].strip('#')))
             else:
-                line = line.replace("#" + varpe, "@" + str(arraytab[filename][varpestripped]))
+                line = line.replace("#" + varpe, "@" + str(arraytab[filename][varpestripped].strip('#')))
             assco.append(line)
 
         # Only when declaring Global Variables
         elif "$" in line:
             varp = line.split("$")[1]
-            print(varp)
+            # print(varp)
             varp = varp.split(',')
-            print(varp[0])
+            # print(varp[0])
             varpe = varp[0]
             varpestripped = varpe.lstrip().rstrip()
-            line = line.replace("$" + varpe, "@" + str(globtab[filename][varpestripped]))
+            # print("--------------")
+            # print(globtab[filename][varpestripped].strip('$'))
+            line = line.replace("$" + varpe, "$	" + str(globtab[filename][varpestripped].strip('$')))
             assco.append(line)
         
         # Call to Loops/Functions
@@ -1140,8 +1126,9 @@ def pass2(filename):
             assco.append(line)
 
     assemblycode2lines = '\n'.join(assco)
+    print("assembly pass 2: ")
     print(assemblycode2lines)
-    print(assco)
+    # print(assco)
 
     with open(filename + ".pass2", "w") as file:
         file.write(assemblycode2lines)
