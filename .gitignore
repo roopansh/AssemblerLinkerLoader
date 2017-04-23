@@ -5,3 +5,9 @@ __pycache__/
 # passes files
 *.pass1
 *.pass2
+
+# Linked Files
+*.linked
+
+# misc
+.idea/
