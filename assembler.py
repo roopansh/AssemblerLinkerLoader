@@ -166,7 +166,7 @@ def pass1(fileNames):
                     pooltab_counter = pooltab_counter + 1
                     location_counter = location_counter + optab['MVI'] + optab['MOV']
                 else:
-                    assemblycode.append("MOV R," + '#'  + str(var2))  # load to any register
+                    assemblycode.append("MOV R," + '#' + str(var2))  # load to any register
                     assemblycode.append("MOV " + '#' + str(var1) + ' ,R ')  # load from that register
                     # push in symtab
                     symtab[filename][var1] = '#' + str(location_counter)
@@ -194,14 +194,15 @@ def pass1(fileNames):
                     pooltab_counter = pooltab_counter + 1
                     location_counter = location_counter + optab['MVI'] + optab['MOV']
                 else:
-                    assemblycode.append("MOV R," + '#'  + str(var2))  # load to any register
-                    assemblycode.append("MOV " + '#' + str(var1) + ' ,R ')  # load from that register
+                    assemblycode.append("MOV R," + symtab[filename][var2])  # load to any register
                     # push in symtab
-                    symtab[filename][var1] ='#' + str(location_counter)
-                    location_counter = location_counter + optab['LDA'] + optab['STA']
+                    symtab[filename][var1] ='#' + str(var1)
+                    assemblycode.append("MOV " + symtab[filename][var1] + ' ,R ')  # load from that register
+                    location_counter = location_counter + optab['MOV'] + optab['MOV']
                 vartab[filename].append(var1)
 
             elif reext.match(line):
+                print("parsing")
                 var = reext.match(line).group(1)
                 if isint(var):
                     error = "Expected variable in " + line
@@ -349,7 +350,7 @@ def pass1(fileNames):
                         error = "syntax error =>  " + line
                         return
                     assemblycode.append("MVI B,0")
-                    assemblycode.append("LDA " + +' #' + str(var3))
+                    assemblycode.append("LDA " +' #' + str(var3))
                     location_counter = location_counter + optab["MVI"] + optab["LDA"]
                     assemblycode.append("JZ #" + str(
                         location_counter + optab["JZ"] + optab["MOV"] + optab["MVI"] + optab["ADD"] + optab["MOV"] +
@@ -362,7 +363,7 @@ def pass1(fileNames):
                     assemblycode.append("SUI 1")
                     assemblycode.append("JMP #" + str(location_counter))
                     assemblycode.append("MOV A,B")
-                    assemblycode.append("STA " + +' #' + str(var1))
+                    assemblycode.append("STA " +' #' + str(var1))
                     location_counter = location_counter + optab["JZ"] + optab["MOV"] + optab["MVI"] + optab["ADD"] + \
                                        optab[
                                            "MOV"] + optab["MOV"] + optab["SUI"] + optab["JMP"] + optab["MOV"] + optab[
@@ -1080,7 +1081,7 @@ def pass2(filename):
     for line in pass1code:
         # print("line is : " + line)
         # No special symbol in the line
-        if "&&&" not in line and "!!!" not in line and "~~~" not in line and "#" not in line and "$" not in line :
+        if "&&&" not in line and "!!!" not in line and "~~~" not in line and "#" not in line :
             assco.append(line)
         
         # JMP statements for IF
@@ -1113,18 +1114,20 @@ def pass2(filename):
                 line = line.replace("#" + varpe, "@" + str(arraytab[filename][varpestripped].strip('#')))
             assco.append(line)
 
-        # Only when declaring Global Variables
-        elif "$" in line:
-            varp = line.split("$")[1]
-            # print(varp)
-            varp = varp.split(',')
-            # print(varp[0])
-            varpe = varp[0]
-            varpestripped = varpe.lstrip().rstrip()
-            # print("--------------")
-            # print(globtab[filename][varpestripped].strip('$'))
-            line = line.replace("$" + varpe, "$	" + str(globtab[filename][varpestripped].strip('$')))
-            assco.append(line)
+        # # Only when declaring Global Variables
+        # elif "$" in line:
+        #     print("coming here....")
+        #     varp = line.split("$")[1]
+        #     # print(varp)
+        #     varp = varp.split(',')
+        #     # print(varp[0])
+        #     varpe = varp[0]
+        #     varpestripped = varpe.lstrip().rstrip()
+        #     # print("--------------")
+        #     # print(globtab[filename][varpestripped].strip('$'))
+        #     print(globtab)
+        #     line = line.replace("$" + varpe, "$	" + str(globtab[filename][varpestripped].strip('$')))
+        #     assco.append(line)
         
         # Call to Loops/Functions
         else:
