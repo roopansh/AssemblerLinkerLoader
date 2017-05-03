@@ -7,21 +7,9 @@ def convert(filename, offset):
 
 	for line in lines:
 		if '@' in line:
-			varp = line.split("@")[1]
-			# print(varp)
-			varp = varp.split(',')
-			# print(varp[0])
-			varpe = varp[0]
-			varpestripped = varpe.lstrip().rstrip()
-			add = int(varpestripped)
+			add = int(line.split('@')[1])
 			add = str(add + offset)
-			# print ("add" + add)
-			# print ( varp)
-			# print ("varpe" + varpe)
-			# print ("varprestr" + varpestripped)
-			# print(line)
-			line = line.replace('@' + varpestripped, "" + add)
-			# print(line)
+			line = line.replace('@' + line.split('@')[1], add)
 			asscode.append(line)
 		else:
 			asscode.append(line)
@@ -31,5 +19,3 @@ def convert(filename, offset):
 	with open(filename.split('.')[0] + '.loaded', 'w') as file:
 		file.write('\n'.join(asscode))
 		file.close()
-
-convert('test1.linked',5000)

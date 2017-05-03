@@ -1,1 +1,1 @@
-global a = 100
+global a = 10

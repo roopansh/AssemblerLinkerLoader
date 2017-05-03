@@ -10,67 +10,62 @@ print(filelentab)
 
 
 def findfile(string, files):
-	for file in files:
-		print(globtab)
-		if string in globtab[file.split('.')[0]] and "$" in globtab[file.split('.')[0]][string]:
-			return file.split('.')[0], globtab[file.split('.')[0]][string].split("$")[1]
-	return "Not found", "-1"
+    for file in files:
+        if string in globtab[file.split('.')[0]] and "@" in globtab[file.split('.')[0]][string]:
+            return file.split('.')[0], globtab[file.split('.')[0]][string].split("@")[1]
+    return "Not found", "-1"
 
 def link(fileNames):
-	global error
-	global startaddfile
-	global filelentab
-	global globtab
-	startaddfile = {}
-	filelentab = assembler.filelentab
-	globtab = assembler.globtab
-	error = "False"
-	memadd = 0
-	for filename in fileNames:
-		startaddfile[filename.split('.')[0]] = memadd
-		memadd = memadd + filelentab[filename.split('.')[0]]
+    global error
+    global startaddfile
+    global filelentab
+    global globtab
+    startaddfile = {}
+    filelentab = assembler.filelentab
+    globtab = assembler.globtab
+    error = "False"
+    memadd = 0
+    for filename in fileNames:
+        startaddfile[filename.split('.')[0]] = memadd
+        memadd = memadd + filelentab[filename.split('.')[0]]
 
-	lincode = []
+    lincode = []
 
-	for filenam in fileNames:
-		filename = filenam.split('.')[0]
-		with open(filename + '.pass2', 'r') as file:
-			lines = file.read().split('\n')
-			file.close()
-		print("Linker start -------------------------------------------------------------")
-		for line in lines:
-			# No variables to link
-			if '$' not in line and '@' not in line:
-				lincode.append(line)
+    for filenam in fileNames:
+        filename = filenam.split('.')[0]
+        with open(filename + '.pass2', 'r') as file:
+            lines = file.read().split('\n')
+            file.close()
+        print("Linker start -------------------------------------------------------------")
+        for line in lines:
+            # No variables to link
+            if '$' not in line and '@' not in line:
+                lincode.append(line)
 
-			# Unlinked local variables
-			elif '@' in line:
-				addr = line.split('@')[1]
-				addrtmp = addr.split(',')[0]
-				# print(addr1[0])
-				addr2 = str(int(addrtmp) + startaddfile[filename])
-				line = line.replace('@' + addrtmp, '@' + addr2)
-				lincode.append(line)
+            # Unlinked local variables
+            elif '@' in line:
+                addr = line.split('@')[1]
+                addrtmp = addr.split(',')[0]
+                # print(addr1[0])
+                addr2 = str(int(addrtmp) + startaddfile[filename])
+                line = line.replace('@' + addrtmp, '@' + addr2)
+                lincode.append(line)
 
-			# Unlinked Global Variables
-			elif '$' in line:
-				print("ghusa")
-				var = line.split('$')[1]
-				vara = var.split(',')[0]
-				# fname, add = findfile(line.split('$')[1], fileNames)
-				print(var)
-				fname, add = findfile(var, fileNames)
-				print(fname)
-				if fname == "Not found":
-					error = "External variable " + line.split('$')[1] + " not found: " + line
-					print("sdgfdf")
-					return
+            # Unlinked Global Variables
+            elif '$' in line:
+                var = line.split('$')[1]
+                vara = var.split(',')[0]
+                # fname, add = findfile(line.split('$')[1], fileNames)
+                fname, add = findfile(var, fileNames)
+                if fname == "Not found":
+                	error = "External variable " + line.split('$')[1] + " not found: " + line
+                	return
+                line = line.replace('$' + vara, "@" + str(int(add) + startaddfile[fname]))
+                lincode.append(line)
 
-				line = line.replace('$' + vara, "@" + str(int(add) + startaddfile[fname]))
-				lincode.append(line)
-			print(line)
-	with open(fileNames[0].split('.')[0] + '.linked', 'w') as file:
-		file.write("\n".join(lincode))
-		file.close()
+            print(line)
+    with open(fileNames[0].split('.')[0] + '.linked', 'w') as file:
+        file.write("\n".join(lincode))
+        file.close()
 
-link(['test1.txt','test2.txt'])
+link(['test1.txt','test2.txt',])
