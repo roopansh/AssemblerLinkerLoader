@@ -6,6 +6,19 @@ AUTHOR :-   Roopansh Bansal     150101053
 
 import re
 
+filelentab = {}
+optab = {}
+symtab = {}
+funtab = {}
+arraytab = {}
+littab = {}
+pooltab = []
+globtab = {}
+iftable = {}
+error = "False"
+pass1code = ''
+vartab = {}
+
 # read the opcodes file and store in optab along with opcode length
 def findoptab():
     with open("opcodes.txt", "r") as file:
@@ -41,19 +54,7 @@ def pass1(fileNames):
     global function_counter
     global pass1code
     global iftable
-    optab = {}
-    symtab = {}
-    funtab = {}
-    arraytab = {}
-    littab = {}
-    pooltab = []
-    globtab = {}
-    filelentab = {}
-    iftable = {}
-    error = "False"
-    pass1code = ''
-    vartab = {}
-        
+            
     findoptab()
 
     '''
@@ -1151,6 +1152,6 @@ def pass2(filename):
         file.close()
 
 # fileNames
-pass1(['test1.txt'])
-if not error == "False" :
-    print(error)
+# pass1(['test1.txt'])
+# if not error == "False" :
+#     print(error)
