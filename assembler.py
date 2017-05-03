@@ -33,7 +33,6 @@ def pass1(fileNames):
     global funtab
     global globtab
     global arraytab
-    global iftable
     global littab
     global pooltab
     global filelentab
@@ -41,6 +40,7 @@ def pass1(fileNames):
     global pooltab_counter
     global function_counter
     global pass1code
+    global iftable
     optab = {}
     symtab = {}
     funtab = {}
@@ -1151,6 +1151,6 @@ def pass2(filename):
         file.close()
 
 # fileNames
-pass1(['test.txt'])
+pass1(['test1.txt'])
 if not error == "False" :
     print(error)

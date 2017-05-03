@@ -68,4 +68,4 @@ def link(fileNames):
         file.write("\n".join(lincode))
         file.close()
 
-link(['test1.txt','test2.txt',])
+# link(['test1.txt','test2.txt',])
