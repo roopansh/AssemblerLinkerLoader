@@ -1,4 +1,3 @@
-function a
-var b = 10
-endfunction
-a()
+var a[5]
+a[0] = 10
+a[1] = 100

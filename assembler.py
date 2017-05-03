@@ -1073,8 +1073,8 @@ def pass1(fileNames):
             location_counter = location_counter + 4*int(arraytab[filename][array][1])
 
         assemblycode1lines = '\n'.join(assemblycode)
-        # print("assembly pass 1 : ")
-        # print(assemblycode1lines)
+        print("assembly pass 1 : ")
+        print(assemblycode1lines)
         pass1code = assemblycode
 
         with open(filename+".pass1", "w") as file:
@@ -1100,6 +1100,7 @@ def pass2(filename):
 
         # JMP statements for FUNCTION
         elif "!!!" in line:
+            print('askdfsadf')
             fnp = line.split("!!!")[1]
             fnp = int(fnp)
             line = line.replace("!!!" + line.split("!!!")[1], "@" + str(fcalls[fnp]))
@@ -1108,13 +1109,23 @@ def pass2(filename):
         # Any Variable Name
         elif "#" in line:
             varp = line.split("#")[1]
+            # print(varp)
             varp = varp.split(',')
+            # print(varp[0])
             varpe = varp[0]
             varpestripped = varpe.lstrip().rstrip()
+            # print("+++++++++++++++++++++++++++")
+            # print(symtab[filename][varpestripped].strip('#'))
+            print(varpestripped, symtab)
+            print(varpestripped, arraytab)
             if(varpestripped in symtab[filename]):
                 line = line.replace("#" + varpe, "@" + str(symtab[filename][varpestripped].strip('#')))
             else:
-                line = line.replace("#" + varpe, "@" + str(arraytab[filename][varpestripped].strip('#')))
+                print(varpestripped.split('+'))
+                varpestrip = varpestripped.split('+')[0]
+                disp  = varpestripped.split('+')[1]
+                print(varpestripped)
+                line = line.replace("#" + varpe, "@" + str(int(arraytab[filename][varpestrip][0]) + int(disp)*4 ))
             assco.append(line)
 
         # # Only when declaring Global Variables
@@ -1139,7 +1150,11 @@ def pass2(filename):
             assco.append(line)
 
     assemblycode2lines = '\n'.join(assco)
-    
+    print("assembly pass 2: ")
+    print(assemblycode2lines)
+    print(filelentab)
+    # print(assco)
+
     with open(filename + ".pass2", "w") as file:
         file.write(assemblycode2lines)
         file.close()
