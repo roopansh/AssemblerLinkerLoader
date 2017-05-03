@@ -59,9 +59,12 @@ def link(fileNames):
                 line = line.replace('$' + vara, "@" + str(int(add) + startaddfile[fname]))
                 lincode.append(line)
 
-            # print(line)
+            print(line)
     with open(fileNames[0].split('.')[0] + '.linked', 'w') as file:
         file.write("\n".join(lincode))
         file.close()
 
-# link(['test1.txt','test2.txt',])
+
+if __name__ == "__main__":
+    assembler.pass1(['test1.txt'])
+    link(['test1.txt'])

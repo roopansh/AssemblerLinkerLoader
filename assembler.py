@@ -18,6 +18,7 @@ iftable = {}
 error = "False"
 pass1code = ''
 vartab = {}
+fcalls = {}
 
 # read the opcodes file and store in optab along with opcode length
 def findoptab():
@@ -39,23 +40,22 @@ def isint(string):
 
 
 def pass1(fileNames):
-    # NOT REQUIRED 
     # to inform python that we are gonna update global vars and not the local ones
-    # global error
-    # global optab
-    # global symtab
-    # global funtab
-    # global globtab
-    # global arraytab
-    # global littab
-    # global pooltab
-    # global filelentab
-    # global location_counter
-    # global pooltab_counter
-    # global function_counter
-    # global pass1code
-    # global iftable
-            
+    global error
+    global optab
+    global symtab
+    global funtab
+    global globtab
+    global arraytab
+    global littab
+    global pooltab
+    global filelentab
+    global location_counter
+    global pooltab_counter
+    global function_counter
+    global pass1code
+    global iftable
+    global fcalls  
     findoptab()
 
     '''
@@ -1100,6 +1100,7 @@ def pass2(filename):
 
         # JMP statements for FUNCTION
         elif "!!!" in line:
+            print('askdfsadf')
             fnp = line.split("!!!")[1]
             fnp = int(fnp)
             line = line.replace("!!!" + line.split("!!!")[1], "@" + str(fcalls[fnp]))
@@ -1146,6 +1147,7 @@ def pass2(filename):
     assemblycode2lines = '\n'.join(assco)
     print("assembly pass 2: ")
     print(assemblycode2lines)
+    print(filelentab)
     # print(assco)
 
     with open(filename + ".pass2", "w") as file:
