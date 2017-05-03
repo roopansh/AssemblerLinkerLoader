@@ -59,7 +59,6 @@ def link(fileNames):
                 line = line.replace('$' + vara, "@" + str(int(add) + startaddfile[fname]))
                 lincode.append(line)
 
-            print(line)
     with open(fileNames[0].split('.')[0] + '.linked', 'w') as file:
         file.write("\n".join(lincode))
         file.close()

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Sigma - ALL</title>
+		<link rel='shortcut icon' href='static/icon.ico' type='image/x-icon'/ >
+		<link type="text/css" rel="stylesheet" href="static/css/icon.css" />
+		<link type="text/css" rel="stylesheet" href="static/css/materialize.min.css"  media="screen,projection"/>
+		<link type="text/css" rel="stylesheet" href="static/css/main.css"  media="screen,projection"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	</head>
+	<body>
+		<ul id="slide-out" class="side-nav fixed teal darken-1">
+			<li class="teal  side-btn  darken-2 grey-text text-lighten-5" plink="titleBox"><center>Sigma - ALL</center></li>
+			<li class="teal  lighten-4 "><a class="side-btn grey-text text-lighten-5" plink="input-files">Input Files</a></li>
+			<li class="teal  lighten-3 "><a class="side-btn grey-text text-lighten-5" plink="pass1">Pass 1</a></li>
+			<li class="teal  lighten-2 "><a class="side-btn grey-text text-lighten-5" plink="pass2">Pass 2</a></li>
+			<li class="teal  "><a class="side-btn grey-text text-lighten-5" plink="linker">Linker</a></li>
+			<li class="teal  darken-1 "><a class="side-btn grey-text text-lighten-5" plink="simulator">Simulator</a></li>
+		</ul>
+		<div class = "row" id="titleBox">
+		  <div class="col s8 offset-s2">
+		    <div class="card-panel teal"  style="margin:0px auto;">		 		
+		      <span class="white-text" style="text-align: center;font-size:40px;">
+				<center>Assembler, Linker and Loader</center>
+		      </span>
+				<br>
+				<br>
+				<br>
+				<br>
+				<div class=" white-text" style="margin-left: 80%;">
+				<br>
+				Gaurav Manchanda
+				<br>
+				Maulik Patni
+				<br>
+				Sambhav Kothari
+				</div>
+		    </div>
+		  </div>
+		</div>
+		<div id="input-files">
+			<form id="input-form" method="post">
+			  <div class="file-field input-field">
+			    <div class="btn teal">
+			      <span>File</span>
+			      <input type="file" name="file" multiple>
+			    </div>
+			    <div class="file-path-wrapper">
+			      <input class="file-path validate" type="text" placeholder="Upload one or more files">
+			    </div>
+				<div >
+			    <button class="btn waves-effect teal waves-light" type="button" id="submit-button" name="submit">Submit
+			    	<i class="material-icons right">send</i>
+			  	</button>
+			  	</div>
+			  </div>
+			</form>
+			<div id='file-data'></div>
+		</div>
+		<div id="pass1">
+			
+		</div>
+		<div id="pass2">
+		</div>
+		<div id="linker">
+			
+			<div class="row">
+			  <div class="col s4 offset-s4">
+			    <div class="card-panel teal" style="margin:0px auto;">
+			 
+			      <span class="white-text" id="linkText">
+						Linker Output
+			      </span>
+			    </div>
+			  </div>
+			</div>
+			       
+		</div>
+		<div id="simulator">
+			<div class="row">
+			  <div class="col s3" style="text-align: center">			 		
+			      <div class="input-field col s6">
+	      	        <input placeholder="Offset" id="offset" type="text" class="validate">
+	      	      </div>
+			      <span class="white-text">
+			      	<a class="waves-effect teal waves-light btn-large" id="loadButton">Load</a>
+				</span>
+			  </div>
+			  <div class="col s6 ">
+			    <div class="card-panel teal"  style="margin:0px auto;">
+			 		
+			      <span class="white-text" id="currentInst">
+					Nothing Loaded yet
+			      </span>
+			    </div>
+			  </div>
+			  <div class="col s3" style="text-align: center">
+			 		
+			      <span class="white-text">
+					<a class="btn-large waves-effect waves-light teal" id="runButton"><i class="material-icons">play_arrow</i></a>
+				</span>
+			  </div>
+			</div>
+			<div class="row">
+			  <div class="col s6" style="display:block">
+			    <div class="card-panel teal col s12" style="margin:20px auto;padding:10px;">
+			 		
+			      <span class="white-text" id="registers">
+					Registers	
+			      </span>
+			    </div>
+			    <div class="card-panel teal col s12" style="margin:20px auto;padding:10px;">
+			    	<span class="white-text" id="varlocs">
+			    	Variable Location
+			    	</span>
+			    </div>
+<!-- 			    <div class="card-panel teal col s12"  style="margin:20px auto;padding:10px;">
+			    	<span class="white-text" id="stack">
+			    	Stack
+			    	</span>
+			    </div> -->
+			  </div>
+			  <div class="col s6 ">
+			  <br>
+			    <div class="card-panel teal" style="margin:0px auto;padding:10px;">
+			 		
+			      <span class="white-text" id="memlocs">
+					Memory Location
+			      </span>
+			    </div>
+			  </div>
+			</div>
+
+		</div>
+		<script type="text/javascript" src="static/js/jquery.js"></script>
+		<script type="text/javascript" src="static/js/materialize.min.js"></script>
+		<script type="text/javascript" src="static/js/main.js"></script>
+	</body>
+</html>

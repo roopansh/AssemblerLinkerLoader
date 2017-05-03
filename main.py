@@ -25,7 +25,7 @@ def getGlobTable():
 
 # Get Extern table
 def getExtTable():
-	return None
+	return {}
 	return assembler.extTable
 
 # Get If table
