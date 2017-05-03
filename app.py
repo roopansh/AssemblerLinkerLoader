@@ -30,11 +30,11 @@ def load_ajax():
 		iftable = main.getifTable()
 		for file in fileNames:
 			file = file.split('.')[0]
-			with open(file+'.l') as f:
+			with open(file+'.pass1') as f:
 				pass1[file] = f.read()
-			with open(file+'.li') as f:
+			with open(file+'.pass2') as f:
 				pass2[file] = f.read()
-		with open(fileNames[0].split('.')[0]+'.ls') as f:
+		with open(fileNames[0].split('.')[0]+'.linked') as f:
 			lin = f.read()
 
 		return json.dumps({'status':'OK' ,'pass1':pass1, 'pass2':pass2, 'lin':lin, 'symTable':symTable, 'globTable':globTable, 'extTable':extTable , 'ifTable': iftable, 'filedata':filedata})
@@ -44,15 +44,15 @@ def loadSimulator():
 	if request.method == "POST":
 		data = request.get_json()
 		fileName = data['file']
-		print(data)
+		# print(data)
 		offset = data['offset']
 		main.runload(int(offset))
-		fileName = fileName+'.8085'
+		fileName = fileName+'.loaded'
 		main.runloader(fileName, offset)
 		reg = main.getRegisters()
 		memory = main.getMemlocs()
 		stack = main.getStack()
-		print(stack)
+		# print(stack)
 		return json.dumps({'status':'OK', 'reg':reg, 'memory':memory , 'stack':stack})
 
 

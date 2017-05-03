@@ -2,40 +2,52 @@ import assembler, linker, loader, simulation
 
 x = []
 
-
+# Run Assembler Pass1
 def runass():
 	assembler.pass1(x)
 
+# Run Linker
 def runlin():
-	linker.linker(x)
+	linker.link(x)
 
+# Run Loader
 def runload(offset=0):
 	loader.loader(x, offset)
 	simulation.reg['PC'] = offset
 
+# Get symbols table
 def getSymTable():
-	return assembler.symTable
+	return assembler.symtab
 
+# Get Global table
 def getGlobTable():
-	return assembler.globTable
+	return assembler.globtab
 
+# Get Extern table
 def getExtTable():
+	return None
 	return assembler.extTable
 
+# Get If table
 def getifTable():
-	return assembler.ifTable
+	return assembler.iftable
 
+# Run Loader
 def runloader(file, offset=0):
 	simulation.load(file, offset)
 
+# Simulation
 def runSimulator():
 	simulation.callbackf()
 
+# Get register values
 def getRegisters():
 	return simulation.reg
 
+# get Stack of simulator
 def getStack():
 	return simulation.stack
 
+# get memory locations of simulator
 def getMemlocs():
 	return simulation.memory
