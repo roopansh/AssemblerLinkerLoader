@@ -21,7 +21,7 @@ oplen = {}
 dbloc = []
 
 def calculatelen():
-	inputFile = open('opcodes.cf',"r")
+	inputFile = open('opcodes.txt',"r")
 	code = inputFile.read()
 	lines = code.split('\n')
 	for line in lines :
