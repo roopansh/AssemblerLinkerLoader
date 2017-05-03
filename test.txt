@@ -1,1 +1,5 @@
-global a = 5
+var a = 0
+if 2 < a
+	a = a + 5
+endif
+a = a + 10

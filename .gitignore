@@ -9,5 +9,8 @@ __pycache__/
 # Linked Files
 *.linked
 
+# Loaded Files
+*.loaded
+
 # misc
 .idea/
