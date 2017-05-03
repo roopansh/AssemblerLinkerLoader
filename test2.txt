@@ -1,2 +1,2 @@
 extern a
-var b = 20
+var b = a

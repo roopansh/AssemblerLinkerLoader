@@ -1,6 +1,4 @@
 var a = 0
-var b = 5
-if 2 < a
-	a = a + 5
-endif
-a = a + 10
+loop 5
+	a = a + 2
+endloop

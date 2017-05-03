@@ -19,6 +19,7 @@ error = "False"
 pass1code = ''
 vartab = {}
 fcalls = {}
+loops = 0
 
 # read the opcodes file and store in optab along with opcode length
 def findoptab():
@@ -56,6 +57,7 @@ def pass1(fileNames):
     global pass1code
     global iftable
     global fcalls  
+    global loops
     findoptab()
 
     '''
@@ -835,14 +837,14 @@ def pass1(fileNames):
                     assemblycode.append("PUSH E")
                     assemblycode.append("MVI E," + str(var1))
                     location_counter = location_counter + optab["PUSH"] + optab["MVI"]
-                    symtab[filename]["loop" + str(loops)] = "#" + str(location_counter)
+                    symtab[filename]["loop" + str(loops)] = "%" + str(location_counter)
                     loops = loops + 1
                 else:
                     assemblycode.append("PUSH E")
                     assemblycode.append("LDA " + str(symtab[filename][var1]))
                     assemblycode.append("MOV E,A")
                     location_counter = location_counter + optab["PUSH"] + optab["LDA"] + optab["MOV"]
-                    symtab[filename]["loop" + str(loops)] = "#" + str(location_counter)
+                    symtab[filename]["loop" + str(loops)] = "%" + str(location_counter)
                     loops = loops + 1
             # end loop
             elif reendloop.match(line):
@@ -1053,7 +1055,8 @@ def pass1(fileNames):
         filelentab[filename] = location_counter
         # all lines have been passed in pass1
         assemblycode.append("END")
-
+        location_counter = location_counter + 1
+        
         for var in vartab[filename]:
             assemblycode.append(var + " DS 1")
             symtab[filename][var] ="#" + str(location_counter)

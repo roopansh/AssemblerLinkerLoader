@@ -1,6 +1,5 @@
 import sys
 
-
 reg = {}
 reg['A'] = 0
 reg['B'] = 0
@@ -11,12 +10,10 @@ reg['F'] = 0
 reg['G'] = 0
 reg['H'] = 0
 reg['PC'] = 0
-
-
 reg['SP'] = 0
+
 PC = 0
 stack = []
-
 oplen = {}
 dbloc = []
 
@@ -39,13 +36,14 @@ def load(filename, offset):
 	mem = offset
 	for line in lines :
 		op = line.split(' ')[0].lstrip().rstrip()
-		if op != 'DB':
-			memory[mem] = line
+		memory[mem] = line
+		if op in oplen:
 			mem += oplen[op]
+		elif op[0] == "=":
+			pass
 		else:
-			memory[mem] = int(line.split(' ')[1].lstrip().rstrip())
-			dbloc.append(mem)
-			mem += 1
+			op = line.split(' ')[1].lstrip().rstrip()
+			mem += oplen[op]
 
 def simulator(pc = 0):
 	inst = memory[pc]
@@ -59,13 +57,10 @@ def simulator(pc = 0):
 	print (memlocs)
 	# raw_input("Press Enter to continue...")
 	if opcode == 'HLT':
-		# progcompleted.set('DONE')
 		return
 	elif opcode == 'JMP':
 		nextinst = int(inst.split(' ')[1])
 		PC = nextinst
-		# print (nextinst)
-		# print (PC)
 	elif opcode == 'MVI':
 		regvar = inst.split(' ')[1].split(',')[0].lstrip().rstrip()
 		reg[regvar] = int(inst.split(' ')[1].split(',')[1].lstrip().rstrip())

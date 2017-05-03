@@ -43,7 +43,7 @@ def loadSimulator():
 	if request.method == "POST":
 		data = request.get_json()
 		fileName = data['file']
-		# print(data)
+		print(data)
 		offset = data['offset']
 		main.runload(int(offset))
 		fileName = fileName+'.loaded'

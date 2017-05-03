@@ -12,7 +12,7 @@ def runlin():
 
 # Run Loader
 def runload(offset=0):
-	loader.loader(x, offset)
+	loader.convert(x, offset)
 	simulation.reg['PC'] = offset
 
 # Get symbols table

@@ -43,6 +43,10 @@
           fileNames[i] = files[i].name;
       }
 
+
+
+
+
       $.ajax({
             type : "POST",
             url : "/load_ajax",
@@ -85,7 +89,6 @@
                 tabs+='<div class="col s12 card-panel teal white-text" > Literal Table<br>'+printDic(response['symTable'][tempname])+'</div>';
                 tabs+='<div class="col s12 card-panel teal white-text" > Symbol Table<br>'+printDic(response['ifTable'][tempname])+'</div>';
                 tabs+='<div class="col s12 card-panel teal white-text" >Global Table<br>'+printDic(response['globTable'][tempname])+'</div>';
-                tabs+='<div class="col s12 card-panel teal white-text" > Extern Table<br>'+printDic(response['extTable'][tempname])+'</div>';
                 tabs+= '</div>';
                 tabs+='</div>';
               }
@@ -105,7 +108,6 @@
                 tabs+= '<div id="tables" class="row col s4" style="display:block">';
                 tabs+='<div class="col s12 card-panel teal white-text" > Symbol Table<br>'+printDic(response['symTable'][tempname])+'</div>';
                 tabs+='<div class="col s12 card-panel teal white-text" >Global Table<br>'+printDic(response['globTable'][tempname])+'</div>';
-                tabs+='<div class="col s12 card-panel teal white-text" > Extern Table<br>'+printDic(response['extTable'][tempname])+'</div>';
                 tabs+= '</div>';
                 tabs+='</div>';
               }
