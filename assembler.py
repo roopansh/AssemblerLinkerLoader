@@ -39,21 +39,22 @@ def isint(string):
 
 
 def pass1(fileNames):
+    # NOT REQUIRED 
     # to inform python that we are gonna update global vars and not the local ones
-    global error
-    global optab
-    global symtab
-    global funtab
-    global globtab
-    global arraytab
-    global littab
-    global pooltab
-    global filelentab
-    global location_counter
-    global pooltab_counter
-    global function_counter
-    global pass1code
-    global iftable
+    # global error
+    # global optab
+    # global symtab
+    # global funtab
+    # global globtab
+    # global arraytab
+    # global littab
+    # global pooltab
+    # global filelentab
+    # global location_counter
+    # global pooltab_counter
+    # global function_counter
+    # global pass1code
+    # global iftable
             
     findoptab()
 
@@ -1151,7 +1152,8 @@ def pass2(filename):
         file.write(assemblycode2lines)
         file.close()
 
-# fileNames
-# pass1(['test1.txt'])
-# if not error == "False" :
-#     print(error)
+if __name__ == "__main__":
+    pass1(['test1.txt'])
+
+if not error == "False" :
+    print(error)

@@ -5,10 +5,6 @@ startaddfile = {}
 filelentab = assembler.filelentab
 globtab = assembler.globtab
 
-print("filename is ")
-print(filelentab)
-
-
 def findfile(string, files):
     for file in files:
         if string in globtab[file.split('.')[0]] and "@" in globtab[file.split('.')[0]][string]:
@@ -36,7 +32,7 @@ def link(fileNames):
         with open(filename + '.pass2', 'r') as file:
             lines = file.read().split('\n')
             file.close()
-        print("Linker start -------------------------------------------------------------")
+        # print("Linker start -------------------------------------------------------------")
         for line in lines:
             # No variables to link
             if '$' not in line and '@' not in line:
@@ -63,7 +59,7 @@ def link(fileNames):
                 line = line.replace('$' + vara, "@" + str(int(add) + startaddfile[fname]))
                 lincode.append(line)
 
-            print(line)
+            # print(line)
     with open(fileNames[0].split('.')[0] + '.linked', 'w') as file:
         file.write("\n".join(lincode))
         file.close()
