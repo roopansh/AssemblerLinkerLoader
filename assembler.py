@@ -236,7 +236,7 @@ def pass1(fileNames):
 
                 # e.g-a=2+3
                 if isint(var2) and isint(var3):
-                    assemblycode.append("MVI A," + str(var2))
+                    assemblycode.append("MVI A, " + str(var2))
                     assemblycode.append("ADI " + str(var3))
                     assemblycode.append("STA " + str(symtab[filename][var1]))
                     location_counter = location_counter + optab['MVI'] + optab['ADI'] + optab['STA']
@@ -285,7 +285,7 @@ def pass1(fileNames):
 
                 # e.g-a=2-3
                 if isint(var2) and isint(var3):
-                    assemblycode.append("MVI A," + str(var2))
+                    assemblycode.append("MVI A, " + str(var2))
                     assemblycode.append("SUI " + str(var3))
                     assemblycode.append("STA " + str(symtab[filename][var1]))
                     location_counter = location_counter + optab['MVI'] + optab['SUI'] + optab['STA']
@@ -335,14 +335,14 @@ def pass1(fileNames):
                     return
                 # c = 3*5
                 if isint(var2) and isint(var3):
-                    assemblycode.append("MVI B,0")
-                    assemblycode.append("MVI A," + str(var3))
+                    assemblycode.append("MVI B, 0")
+                    assemblycode.append("MVI A, " + str(var3))
                     location_counter = location_counter + optab["MVI"] + optab["MVI"]
                     assemblycode.append("JZ #" + str(
                         location_counter + optab["JZ"] + optab["MOV"] + optab["MVI"] + optab["ADD"] + optab["MOV"] +
                         optab["MOV"] + optab["SUI"] + optab["JMP"]))
                     assemblycode.append("MOV C,A")
-                    assemblycode.append("MVI A," + str(var2))
+                    assemblycode.append("MVI A, " + str(var2))
                     assemblycode.append("ADD B")
                     assemblycode.append("MOV B,A")
                     assemblycode.append("MOV A,C")
@@ -359,14 +359,14 @@ def pass1(fileNames):
                     if var3 not in symtab[filename]:
                         error = "syntax error =>  " + line
                         return
-                    assemblycode.append("MVI B,0")
+                    assemblycode.append("MVI B, 0")
                     assemblycode.append("LDA " + str(symtab[filename][var3]))
                     location_counter = location_counter + optab["MVI"] + optab["LDA"]
                     assemblycode.append("JZ #" + str(
                         location_counter + optab["JZ"] + optab["MOV"] + optab["MVI"] + optab["ADD"] + optab["MOV"] +
                         optab["MOV"] + optab["SUI"] + optab["JMP"]))
                     assemblycode.append("MOV C,A")
-                    assemblycode.append("MVI A," + str(var2))
+                    assemblycode.append("MVI A, " + str(var2))
                     assemblycode.append("ADD B")
                     assemblycode.append("MOV B,A")
                     assemblycode.append("MOV A,C")
@@ -383,14 +383,14 @@ def pass1(fileNames):
                     if var2 not in symtab[filename]:
                         error = "syntax error =>  " + line
                         return
-                    assemblycode.append("MVI B,0")
+                    assemblycode.append("MVI B, 0")
                     assemblycode.append("LDA " + str(symtab[filename][var2]))
                     location_counter = location_counter + optab["MVI"] + optab["LDA"]
                     assemblycode.append("JZ %" + str(
                         location_counter + optab["JZ"] + optab["MOV"] + optab["MVI"] + optab["ADD"] + optab["MOV"] +
                         optab["MOV"] + optab["SUI"] + optab["JMP"]))
                     assemblycode.append("MOV C,A")
-                    assemblycode.append("MVI A," + str(var3))
+                    assemblycode.append("MVI A, " + str(var3))
                     assemblycode.append("ADD B")
                     assemblycode.append("MOV B,A")
                     assemblycode.append("MOV A,C")
@@ -407,7 +407,7 @@ def pass1(fileNames):
                     if var2 not in symtab[filename] or var3 not in symtab[filename]:
                         error = "syntax error =>  " + line
                         return
-                    assemblycode.append("MVI B,0")
+                    assemblycode.append("MVI B, 0")
                     assemblycode.append("LDA " + str(symtab[filename][var2]))
                     location_counter = location_counter + optab["MVI"] + optab["LDA"]
                     # before this jump B is holding the sum in ith iteration, A is holding remanhing number of iterations
@@ -434,10 +434,10 @@ def pass1(fileNames):
                     return
                 # a = 6/3
                 if isint(var2) and isint(var3):
-                    assemblycode.append("MVI B," + str(var3))
-                    assemblycode.append("MVI A," + str(var2))
+                    assemblycode.append("MVI B, " + str(var3))
+                    assemblycode.append("MVI A, " + str(var2))
                     assemblycode.append("SUB B")
-                    assemblycode.append("MVI C,0")
+                    assemblycode.append("MVI C, 0")
                     location_counter = location_counter + optab["MVI"] + optab["MVI"] + optab["SUB"] + optab["MVI"]
                     assemblycode.append("JM %" + str(
                         location_counter + optab["JM"] + optab["MOV"] + optab["MOV"] + optab["ADI"] + optab["MOV"] +
@@ -461,9 +461,9 @@ def pass1(fileNames):
                         return
                     assemblycode.append("LDA " + str(symtab[filename][var3]))
                     assemblycode.append("MOV B,A")
-                    assemblycode.append("MVI A," + str(var2))
+                    assemblycode.append("MVI A, " + str(var2))
                     assemblycode.append("SUB B")
-                    assemblycode.append("MVI C,0")
+                    assemblycode.append("MVI C, 0")
                     location_counter = location_counter + optab["LDA"] + optab["MOV"] + optab["MVI"] + optab["SUB"] + \
                                        optab["MVI"]
                     assemblycode.append("JM %" + str(
@@ -487,10 +487,10 @@ def pass1(fileNames):
                     if var2 not in symtab[filename]:
                         error = "Invalid line: " + line
                         return
-                    assemblycode.append("MVI B," + str(var3))
+                    assemblycode.append("MVI B, " + str(var3))
                     assemblycode.append("LDA " + str(symtab[filename][var2]))
                     assemblycode.append("SUB B")
-                    assemblycode.append("MVI C,0")
+                    assemblycode.append("MVI C, 0")
                     location_counter = location_counter + optab["MVI"] + optab["LDA"] + optab["SUB"] + optab["MVI"]
                     assemblycode.append("JM %" + str(
                         location_counter + optab["JM"] + optab["MOV"] + optab["MOV"] + optab["ADI"] + optab["MOV"] +
@@ -519,7 +519,7 @@ def pass1(fileNames):
                     assemblycode.append("LDA " + str(symtab[filename][var2]))
                     assemblycode.append("SUB B")
 
-                    assemblycode.append("MVI C,0")
+                    assemblycode.append("MVI C, 0")
                     location_counter = location_counter + optab["LDA"] + optab["MOV"] + optab["LDA"] + optab["SUB"] + \
                                        optab["MVI"]
                     # JM if positive , C contains current counter , F contains the current difference(c-n*d) , B = d
@@ -552,7 +552,7 @@ def pass1(fileNames):
                     return
 
                 if isint(var2) and isint(var3):
-                    assemblycode.append("MVI A," + str(var2))
+                    assemblycode.append("MVI A, " + str(var2))
                     assemblycode.append("ORI " + str(var3))
                     assemblycode.append("STA " + str(symtab[filename][var1]))
                     location_counter = location_counter + optab['MVI'] + optab['ORI'] + optab['STA']
@@ -597,7 +597,7 @@ def pass1(fileNames):
                     return
 
                 if isint(var2) and isint(var3):
-                    assemblycode.append("MVI A," + str(var2))
+                    assemblycode.append("MVI A, " + str(var2))
                     assemblycode.append("ANI " + str(var3))
                     assemblycode.append("STA " + str(symtab[filename][var1]))
                     location_counter = location_counter + optab['MVI'] + optab['ANI'] + optab['STA']
@@ -640,7 +640,7 @@ def pass1(fileNames):
                 # if 2 < 3
                 if isint(var1) and isint(var2):
                     # ACC <-- 2 - 3
-                    assemblycode.append("MVI A," + str(var1))
+                    assemblycode.append("MVI A, " + str(var1))
                     assemblycode.append("SUI " + str(var2))
                     # if SIGN BIT is 0 (i.e. positive)
                     assemblycode.append("JP &&&" + str(ifs))
@@ -712,7 +712,7 @@ def pass1(fileNames):
                 # if 3 > 2
                 if isint(var1) and isint(var2):
                     # ACC <-- 3 - 2
-                    assemblycode.append("MVI A," + str(var1))
+                    assemblycode.append("MVI A, " + str(var1))
                     assemblycode.append("SUI " + str(var2))
                     # if SIGN BIT is 1 (negative)
                     assemblycode.append("JM &&&" + str(ifs))
@@ -782,7 +782,7 @@ def pass1(fileNames):
 
                 # if 2 = 2
                 if isint(var1) and isint(var2):
-                    assemblycode.append("MVI A," + str(var1))
+                    assemblycode.append("MVI A, " + str(var1))
                     assemblycode.append("SUI " + str(var2))
                     assemblycode.append("JNZ &&&" + str(ifs))
                     ifs = ifs + 1
@@ -840,7 +840,7 @@ def pass1(fileNames):
                     return
                 if isint(var1):
                     assemblycode.append("PUSH E")
-                    assemblycode.append("MVI E," + str(var1))
+                    assemblycode.append("MVI E, " + str(var1))
                     location_counter = location_counter + optab["PUSH"] + optab["MVI"]
                     symtab[filename]["loop" + str(loops)] = "%" + str(location_counter)
                     loops = loops + 1
@@ -914,7 +914,7 @@ def pass1(fileNames):
                     return
 
                 if (isint(val)):
-                    assemblycode.append("MVI A," + str(val))
+                    assemblycode.append("MVI A, " + str(val))
                     assemblycode.append("STA " + str(arraytab[filename][name][0]) + "+" + str(disp))
                     location_counter = location_counter + optab["MVI"] + optab["STA"]
 
@@ -934,7 +934,7 @@ def pass1(fileNames):
                 for i in range(len(vas)):
                     vas[i] = vas[i].lstrip().rstrip()
                 if isint(vas[0]):
-                    assemblycode.append("MVI A," + str(vas[0]))
+                    assemblycode.append("MVI A, " + str(vas[0]))
                     location_counter = location_counter + optab["MVI"]
                 elif vas[0] not in symtab[filename]:
                     error = "Invalid line: " + line
@@ -944,7 +944,7 @@ def pass1(fileNames):
                 vas = vas[1:]
                 for var in vas:
                     if isint(var):
-                        assemblycode.append("MVI B," + str(var))
+                        assemblycode.append("MVI B, " + str(var))
                         # current minimum value in C
                         assemblycode.append("MOV C,A")
                         assemblycode.append("SUB B")
@@ -995,7 +995,7 @@ def pass1(fileNames):
                 for i in range(len(vas)):
                     vas[i] = vas[i].lstrip().rstrip()
                 if isint(vas[0]):
-                    assemblycode.append("MVI A," + str(vas[0]))
+                    assemblycode.append("MVI A, " + str(vas[0]))
                     location_counter = location_counter + optab["MVI"]
                 elif vas[0] not in symtab[filename]:
                     error = "Invalid line: " + line
@@ -1005,7 +1005,7 @@ def pass1(fileNames):
                 vas = vas[1:]
                 for var in vas:
                     if isint(var):
-                        assemblycode.append("MVI B," + str(var))
+                        assemblycode.append("MVI B, " + str(var))
                         assemblycode.append("MOV C,A")
                         assemblycode.append("SUB B")
                         location_counter = location_counter + optab["MVI"] + optab["MOV"] + optab["SUB"]

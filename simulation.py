@@ -80,9 +80,13 @@ def simulator(pc = 0):
 		PC = nextinst
 	elif opcode == 'MVI':
 		regvar = inst.split(' ')[1].split(',')[0].lstrip().rstrip()  # First Operand
+		print(regvar)
 		secOperand = inst.split(' ')[2].lstrip().rstrip() # Second operand
-		if isint(secOperand.split('\'')[1].lstrip().rstrip('\'')) :
-			secOperand = secOperand.split('\'')[1].lstrip().rstrip('\'')
+		try:
+			if isint(secOperand.split('\'')[1].lstrip().rstrip('\'')) :
+				secOperand = secOperand.split('\'')[1].lstrip().rstrip('\'')
+		except:
+			pass
 		reg[regvar] = int(secOperand)  
 		PC = pc + int(oplen[opcode])
 	elif opcode == 'ADI':
