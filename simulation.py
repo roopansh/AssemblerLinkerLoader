@@ -152,6 +152,7 @@ def simulator(pc = 0):
 		else:
 			PC = pc + int(oplen[opcode])
 	elif opcode == 'JZ':
+		print("@@@@@@@@@@",inst)
 		nextinst = int(inst.split(' ')[1])
 		if int(reg['A']) == 0:
 			PC = nextinst
