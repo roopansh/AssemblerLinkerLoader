@@ -19,6 +19,10 @@ def runload(offset=0):
 def getSymTable():
 	return assembler.symtab
 
+# Get literals table
+def getLitTable():
+	return assembler.littab2
+
 # Get Global table
 def getGlobTable():
 	return assembler.globtab

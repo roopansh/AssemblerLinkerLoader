@@ -12,6 +12,7 @@ symtab = {}
 funtab = {}
 arraytab = {}
 littab = {}
+littab2 = {}
 pooltab = []
 globtab = {}
 iftable = {}
@@ -49,6 +50,7 @@ def pass1(fileNames):
     global globtab
     global arraytab
     global littab
+    global littab2
     global pooltab
     global filelentab
     global location_counter
@@ -131,6 +133,7 @@ def pass1(fileNames):
         funtab[filename] = {}
         arraytab[filename] = {}
         littab[filename] = []
+        littab2[filename] = {}
         globtab[filename] = {}
         vartab[filename] = []
         fcalls = {}
@@ -153,25 +156,26 @@ def pass1(fileNames):
                 # global a = 5 
                 if isint(var2):
                     # move in a register the value(immeidate data avaialble)
-                    assemblycode.append("MVI R , ='" + str(var2) + "'")
+                    assemblycode.append("MVI D, ='" + str(var2) + "'")
                     # move register in storage element(in DS)
-                    assemblycode.append("MOV " + '#' + str(var1) +" , R")
+                    assemblycode.append("MOV " + '#' + str(var1) +" ,D")
                     # push the symbol in symtab[filename] and symbol name along with #(representing a var)
                     symtab[filename][var1] ='#' + str(var1)
                     globtab[filename][var1] ='#' + str(var1)
                     # push in pooltab current poolctr and in liitab[filename] with value and location counter(just for now)
                     pooltab.append(pooltab_counter)
                     littab[filename].append((var2,globtab[filename][var1]))
+                    littab2[filename][var2] = var1
                     pooltab_counter = pooltab_counter + 1
                     location_counter = location_counter + optab['MVI'] + optab['MOV']
                 # global a = c
                 else:
                     # in pass 1 enter the symbol c from the symtab (we also get the value what type of var it is via it's symbol)
-                    assemblycode.append("MOV R," + str(symtab[filename][var2]))  # load to any register
+                    assemblycode.append("MOV D," + str(symtab[filename][var2]))  # load to any register
                     # push in symtab along with symbil
                     symtab[filename][var1] ='#' + str(var1)
                     globtab[filename][var1] ='#' + str(var1)
-                    assemblycode.append("MOV " + str(symtab[filename][var1]) + ' ,R ')  # load from that register
+                    assemblycode.append("MOV " + str(symtab[filename][var1]) + ' ,D ')  # load from that register
                     location_counter = location_counter + optab['LDA'] + optab['STA']
                 vartab[filename].append(var1)
 
@@ -188,22 +192,23 @@ def pass1(fileNames):
                     return
                 # var a = 5
                 if isint(var2):
-                    assemblycode.append("MVI R , ='" + str(var2) + "'")
-                    assemblycode.append("MOV " + '#' + str(var1) +" , R")
+                    assemblycode.append("MVI D, ='" + str(var2) + "'")
+                    assemblycode.append("MOV " + '#' + str(var1) +" ,D")
                     # push the symbol in symtab[filename] and current location counter just for now(will be updated in pass2
                     symtab[filename][var1] ='#' + str(var1)
                     pooltab.append(pooltab_counter)
                     # push in pooltab and in liitab[filename] with value and location counter(just for now)
                     littab[filename].append((var2, symtab[filename][var1]))
+                    littab2[filename][var2] = var1
                     pooltab_counter = pooltab_counter + 1
                     location_counter = location_counter + optab['MVI'] + optab['MOV']
                 # var a  =d
                 else:
                     # in pass 1 enter the symbol c from the symtab (we also get the value what type of var it is via it's symbol)
-                    assemblycode.append("MOV R," + symtab[filename][var2])  # load to any register
+                    assemblycode.append("MOV D," + symtab[filename][var2])  # load to any register
                     # push in symtab
                     symtab[filename][var1] ='#' + str(var1)
-                    assemblycode.append("MOV " + symtab[filename][var1] + ' ,R ')  # load from that register
+                    assemblycode.append("MOV " + symtab[filename][var1] + ' ,D ')  # load from that register
                     location_counter = location_counter + optab['MOV'] + optab['MOV']
                 vartab[filename].append(var1)
 
@@ -1066,6 +1071,7 @@ def pass1(fileNames):
 
         for i, literal in enumerate(littab[filename]):
             literal = (literal[0], location_counter)
+            littab2[filename][literal[0]] = location_counter
             littab[filename][i] = literal
             assemblycode.append("='" + str(literal[0]) + "'")
             location_counter = location_counter + 4
@@ -1076,8 +1082,8 @@ def pass1(fileNames):
             location_counter = location_counter + 4*int(arraytab[filename][array][1])
 
         assemblycode1lines = '\n'.join(assemblycode)
-        print("assembly pass 1 : ")
-        print(assemblycode1lines)
+        # print("assembly pass 1 : ")
+        # print(assemblycode1lines)
         pass1code = assemblycode
 
         with open(filename+".pass1", "w") as file:
@@ -1103,7 +1109,6 @@ def pass2(filename):
 
         # JMP statements for FUNCTION
         elif "!!!" in line:
-            print('askdfsadf')
             fnp = line.split("!!!")[1]
             fnp = int(fnp)
             line = line.replace("!!!" + line.split("!!!")[1], "@" + str(fcalls[fnp]))
@@ -1119,15 +1124,15 @@ def pass2(filename):
             varpestripped = varpe.lstrip().rstrip()
             # print("+++++++++++++++++++++++++++")
             # print(symtab[filename][varpestripped].strip('#'))
-            print(varpestripped, symtab)
-            print(varpestripped, arraytab)
+            # print(varpestripped, symtab)
+            # print(varpestripped, arraytab)
             if(varpestripped in symtab[filename]):
                 line = line.replace("#" + varpe, "@" + str(symtab[filename][varpestripped].strip('#')))
             else:
-                print(varpestripped.split('+'))
+                # print(varpestripped.split('+'))
                 varpestrip = varpestripped.split('+')[0]
                 disp  = varpestripped.split('+')[1]
-                print(varpestripped)
+                # print(varpestripped)
                 line = line.replace("#" + varpe, "@" + str(int(arraytab[filename][varpestrip][0]) + int(disp)*4 ))
             assco.append(line)
 
@@ -1153,9 +1158,9 @@ def pass2(filename):
             assco.append(line)
 
     assemblycode2lines = '\n'.join(assco)
-    print("assembly pass 2: ")
-    print(assemblycode2lines)
-    print(filelentab)
+    # print("assembly pass 2: ")
+    # print(assemblycode2lines)
+    # print(filelentab)
     # print(assco)
 
     with open(filename + ".pass2", "w") as file:

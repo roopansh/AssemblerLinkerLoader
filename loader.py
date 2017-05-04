@@ -12,9 +12,10 @@ def convert(filename, offset=0):
 			varp = varp.split(',')[0].lstrip().rstrip()
 			add = int(varp)
 			add = str(add + offset)
-			line = line.replace('@' + line.split('@')[1], add)
+			line = line.replace('@' + varp, add)
 			asscode.append(line)
-		if '%' in line:
+
+		elif '%' in line:
 			varp = line.split('%')[1].lstrip().rstrip()
 			add = int(varp)
 			add = str(add + offset)

@@ -17,6 +17,15 @@ stack = []
 oplen = {}
 dbloc = []
 
+
+# check if string passed is an integer
+def isint(string):
+    try:
+        int(string)
+        return True
+    except:
+        return False
+
 def calculatelen():
 	inputFile = open('opcodes.txt',"r")
 	code = inputFile.read()
@@ -35,26 +44,30 @@ def load(filename, offset):
 	lines = code.split('\n')
 	mem = offset
 	for line in lines :
-		op = line.split(' ')[0].lstrip().rstrip()
 		memory[mem] = line
-		if op in oplen:
+		op = line.split(' ')[0].lstrip().rstrip()
+		if op in oplen: # Main opcode
 			mem += oplen[op]
-		elif op[0] == "=":
-			pass
-		else:
+		elif op[0] == "=": # for literals
+			mem += 1
+		else: # adding variables to variables table
 			op = line.split(' ')[1].lstrip().rstrip()
+			dbloc.append(mem)
+			print("DBLOC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%", dbloc)
 			mem += oplen[op]
 
 def simulator(pc = 0):
 	inst = memory[pc]
 	opcode = inst.split(' ')[0]
+	if opcode not in oplen :
+		opcode = inst.split(' ')[1].lstrip().rstrip()
 	global stack
 	memlocs = ''
 	for db in dbloc:
-		memlocs += (str(db) + ' : ' + str(memory[db]) + '\n')
+		memlocs += (str(db) + ' : ' + str(memory[db].split(' ')[2]) + '\n')
 
 	# memstr.set(memlocs)
-	print (memlocs)
+	print ("MEMLOCS ******************" , memlocs)
 	# raw_input("Press Enter to continue...")
 	if opcode == 'HLT':
 		return
@@ -62,8 +75,11 @@ def simulator(pc = 0):
 		nextinst = int(inst.split(' ')[1])
 		PC = nextinst
 	elif opcode == 'MVI':
-		regvar = inst.split(' ')[1].split(',')[0].lstrip().rstrip()
-		reg[regvar] = int(inst.split(' ')[1].split(',')[1].lstrip().rstrip())
+		regvar = inst.split(' ')[1].split(',')[0].lstrip().rstrip()  # First Operand
+		secOperand = inst.split(' ')[2].lstrip().rstrip() # Second operand
+		if isint(secOperand.split('\'')[1].lstrip().rstrip('\'')) :
+			secOperand = secOperand.split('\'')[1].lstrip().rstrip('\'')
+		reg[regvar] = int(secOperand)  
 		PC = pc + int(oplen[opcode])
 	elif opcode == 'ADI':
 		reg['A'] = int(reg['A']) + int(inst.split(' ')[1])
@@ -132,6 +148,12 @@ def simulator(pc = 0):
 			PC = nextinst
 		else:
 			PC = pc + int(oplen[opcode])
+	elif opcode == "END":
+		PC = pc + int(oplen[opcode])
+	elif opcode == "DS":
+		PC = pc + int(oplen[opcode])
+	else:
+		print("ERROR")
 	reg['PC'] = PC
 
 def callbackf():

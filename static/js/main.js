@@ -4,7 +4,6 @@
   });
 
   function printDic(x){
-      console.log(x);
       var stringOut="";
       for (var key in x)
       {
@@ -13,6 +12,35 @@
       }
       return stringOut;
   };
+
+  function printList(x){
+      console.log(x);
+      // var stringOut="";
+      // console.log(x[0])
+      // console.log(x[1])
+      // for (var item : x)
+      // {
+      //   for (var ele in item )
+      //   {
+      //     console.log(ele);
+      //   }
+      //   console.log(item);
+      //   stringOut+=item + "<br>";
+      // }
+      // console.log("HERE" + stringOut);
+      stringOut = "";
+      var printArray = function(arr) {
+          if ( typeof(arr) == "object") {
+              for (var i = 0; i < arr.length; i++) {
+                  printArray(arr[i]);
+                  stringOut+='<br>';
+              }
+          }
+          else stringOut+=str(arr);
+      }
+      printArray(x);
+      return stringOut;
+  }
 
   function printRealDic(x){
       console.log(x);
@@ -86,9 +114,9 @@
                 tabs += '<div id="pass1tab'+i+'" class="col s12">';
                 tabs+= '<div class="col s4 offset-s2 card-panel teal white-text" >'+response['pass1'][fileNames[i].split('.')[0]].replace(/\n/g,"<br>")+'</div>';
                 tabs+= '<div id="tables" class="row col s4" style="display:block">';
-                tabs+='<div class="col s12 card-panel teal white-text" > Literal Table<br>'+printDic(response['symTable'][tempname])+'</div>';
-                tabs+='<div class="col s12 card-panel teal white-text" > Symbol Table<br>'+printDic(response['ifTable'][tempname])+'</div>';
-                tabs+='<div class="col s12 card-panel teal white-text" >Global Table<br>'+printDic(response['globTable'][tempname])+'</div>';
+                tabs+='<div class="col s12 card-panel teal white-text" > Symbols Table<br>'+printDic(response['symTable'][tempname])+'</div>';
+                tabs+='<div class="col s12 card-panel teal white-text" > Literals Table<br>'+printRealDic(response['litTable'][tempname])+'</div>';
+                tabs+='<div class="col s12 card-panel teal white-text" > Global Table<br>'+printDic(response['globTable'][tempname])+'</div>';
                 tabs+= '</div>';
                 tabs+='</div>';
               }
@@ -107,6 +135,7 @@
                 tabs+= '<div class="col s4 offset-s2 card-panel teal white-text" >'+response['pass2'][fileNames[i].split('.')[0]].replace(/\n/g,"<br>")+'</div>';
                 tabs+= '<div id="tables" class="row col s4" style="display:block">';
                 tabs+='<div class="col s12 card-panel teal white-text" > Symbol Table<br>'+printDic(response['symTable'][tempname])+'</div>';
+                tabs+='<div class="col s12 card-panel teal white-text" > Literals Table<br>'+printRealDic(response['litTable'][tempname])+'</div>';
                 tabs+='<div class="col s12 card-panel teal white-text" >Global Table<br>'+printDic(response['globTable'][tempname])+'</div>';
                 tabs+= '</div>';
                 tabs+='</div>';
