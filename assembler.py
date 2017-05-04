@@ -148,9 +148,11 @@ def pass1(fileNames):
 
 			if remacro.match(line):
 				macro_define=1
+				continue
 			
 			elif remend.match(line):
 				macro_define=0
+				continue
 
 			if (macro_define !=0 ):
 				if(macro_define ==1):
@@ -158,7 +160,7 @@ def pass1(fileNames):
 
 					macro_vars=line.split(' ',1)[1].replace(" ","")
 					macro_varscount=len(macro_vars.split(','))
-					macro_variables={}
+					macro_variables=[]
 					for i in range(macro_varscount):
 						temp_var=macro_vars.split(',')[i+1]
 						temp_value=""
@@ -174,7 +176,8 @@ def pass1(fileNames):
 						else:
 							temp_type=3
 							temp_name=temp_var
-						macro_variables{temp_varname}=[temp_vartype,temp_varvalue]
+						macro_variables.append([temp_name,temp_varvalue,temp_vartype])
+						# might have to add temp_defaultvalue as seperate then varvalue
 
 					macro_define=2
 					macro[macro_name] = {}
@@ -184,6 +187,7 @@ def pass1(fileNames):
 				else:
 					macro[macro_name][code].append(line)
 
+				continue
 
 			elif reglo.match(line):
 				var1 = reglo.match(line).group(1)
@@ -1097,9 +1101,38 @@ def pass1(fileNames):
 				symtab[filename][loc] = "#" + str(location_counter)
 
 			elif (line.strip(' ')[0].lstrip().rstrip() in macro):
-				
+				code=macro[macro_name][code]
+				variables=macro[macro_name][variable]
 
-				
+				macro_name	=line.split(' ', 1)[0].lstrip().rstrip()
+				params = line.split(' ', 1)[1].split(',')
+				count=0
+				for p in params:
+					param = p.lstrip().rstrip().split("=")
+
+					if "=" in p:
+						parameter = param[0]
+						flag=0
+						for i,v in enumerate(variables):
+							if (parameter == v[0]):
+								variables[i][1]=param[1]
+								flag=1
+								break
+						
+						elif (flag==0):
+							error = "Error in macor parameters"
+							return error
+						# macro_variables=[temp_varname,temp_varvalue,temp_vartype]
+					
+					else:
+						variable[count][1]=param[1]
+						count++
+
+				for i,l in enumerate(code):
+					for v in variables:
+						code[i]=code[i].replace(v[0],v[1])
+				lines.
+
 			# if line does not matches with any of the above line.
 			elif line.lstrip().rstrip() != "":
 				error = "Invalid line: " + line
@@ -1177,21 +1210,6 @@ def pass2(filename):
 
 			assco.append(line)
 
-		# # Only when declaring Global Variables
-		# elif "$" in line:
-		#     print("coming here....")
-		#     varp = line.split("$")[1]
-		#     # print(varp)
-		#     varp = varp.split(',')
-		#     # print(varp[0])
-		#     varpe = varp[0]
-		#     varpestripped = varpe.lstrip().rstrip()
-		#     # print("--------------")
-		#     # print(globtab[filename][varpestripped].strip('$'))
-		#     print(globtab)
-		#     line = line.replace("$" + varpe, "$   " + str(globtab[filename][varpestripped].strip('$')))
-		#     assco.append(line)
-		
 		# Call to Loops/Functions
 		else:
 			jc = line.split("~~~")[1]
@@ -1200,10 +1218,7 @@ def pass2(filename):
 			assco.append(line)
 
 	assemblycode2lines = '\n'.join(assco)
-	# print("assembly pass 2: ")
-	# print(assemblycode2lines)
-	# print(filelentab)
-	# print(assco)
+
 
 	with open(filename + ".pass2", "w") as file:
 		file.write(assemblycode2lines)
