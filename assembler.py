@@ -319,9 +319,9 @@ def pass1(fileNames):
                         error = "Variable not declared in " + line
                         return
 
-                    assemblycode.append("LDA " + str(symtab[filename][var2]))
-                    assemblycode.append("MOV B,A")
                     assemblycode.append("LDA " + str(symtab[filename][var3]))
+                    assemblycode.append("MOV B,A")
+                    assemblycode.append("LDA " + str(symtab[filename][var2]))
                     assemblycode.append("SUB B")
                     assemblycode.append("STA " + str(symtab[filename][var1]))
                     location_counter = location_counter + optab['LDA'] + optab['MOV'] + optab['LDA'] + optab['SUB'] + optab['STA']
@@ -1118,15 +1118,10 @@ def pass2(filename):
         # Any Variable Name
         elif "#" in line:
             varp = line.split("#")[1]
-            # print(varp)
             varp = varp.split(',')
-            # print(varp[0])
             varpe = varp[0]
             varpestripped = varpe.lstrip().rstrip()
-            # print("+++++++++++++++++++++++++++")
-            # print(symtab[filename][varpestripped].strip('#'))
-            # print(varpestripped, symtab)
-            # print(varpestripped, arraytab)
+            
             if(varpestripped in symtab[filename]):
                 line = line.replace("#" + varpe, "@" + str(symtab[filename][varpestripped].strip('#')))
             else:
@@ -1134,7 +1129,7 @@ def pass2(filename):
                 varpestrip = varpestripped.split('+')[0]
                 disp  = varpestripped.split('+')[1]
                 # print(varpestripped)
-                line = line.replace("#" + varpe, "@" + str(int(arraytab[filename][varpestrip][0]) + int(disp)*4 ))
+                line = line.replace("#" + varpe, "@" + str(int(arraytab[filename][varpestrip][0]) + int(disp)*1 ))
             assco.append(line)
 
         # # Only when declaring Global Variables
