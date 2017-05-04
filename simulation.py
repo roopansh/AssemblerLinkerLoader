@@ -163,6 +163,12 @@ def simulator(pc = 0):
 			PC = nextinst
 		else:
 			PC = pc + int(oplen[opcode])
+	elif opcode == 'JM':
+		nextinst = int(inst.split(' ')[1])
+		if int(reg['A']) < 0:
+			PC = nextinst
+		else:
+			PC = pc + int(oplen[opcode])
 	elif opcode == "END":
 		PC = pc + int(oplen[opcode])
 	elif opcode == "DS":

@@ -1,2 +1,5 @@
 var a = 5
-a = 2*3
+var b = 10
+if 3 < b
+a = 5 + 10
+endif
