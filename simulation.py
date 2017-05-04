@@ -152,7 +152,6 @@ def simulator(pc = 0):
 		else:
 			PC = pc + int(oplen[opcode])
 	elif opcode == 'JZ':
-		print("@@@@@@@@@@",inst)
 		nextinst = int(inst.split(' ')[1])
 		if int(reg['A']) == 0:
 			PC = nextinst
@@ -168,9 +167,15 @@ def simulator(pc = 0):
 		PC = pc + int(oplen[opcode])
 	elif opcode == "DS":
 		PC = pc + int(oplen[opcode])
+	elif opcode == "CALL":
+		reg['SP'] = pc
+		functionAddress = inst.split(' ')[1].lstrip().rstrip()
+		PC = functionAddress
+	elif opcode == "RET":
+		PC = reg['SP'] + oplen['CALL']
+		reg['SP'] = 0
 	elif opcode == "LITTERAL":
 		PC = pc + 1
-
 	reg['PC'] = PC
 
 def callbackf():

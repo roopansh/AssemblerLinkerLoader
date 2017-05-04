@@ -1152,7 +1152,9 @@ def pass2(filename):
 		# Call to Loops/Functions
 		else:
 			jc = line.split("~~~")[1]
+			print(jc)
 			line = line.replace("~~~" + line.split("~~~")[1], str(symtab[filename][jc]))
+			line = line.replace("#", "@" )
 			assco.append(line)
 
 	assemblycode2lines = '\n'.join(assco)
