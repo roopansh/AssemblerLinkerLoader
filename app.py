@@ -4,7 +4,6 @@ import main
 
 app = Flask(__name__)
 
-
 @app.route('/')
 def searchpage():
 	return render_template('index.html')
@@ -46,18 +45,20 @@ def load_ajax():
 @app.route('/loadSimulator', methods=["GET", "POST"])
 def loadSimulator():
 	if request.method == "POST":
+		main.resetAll()
 		data = request.get_json()
 		fileName = data['file']
-		print(data)
 		offset = data['offset']
 		main.runload(int(offset))
 		fileName = fileName+'.loaded'
+		print(fileName)
 		main.runloader(fileName, offset)
 		reg = main.getRegisters()
 		memory = main.getMemlocs()
+		memoryData = main.getMemData()
 		stack = main.getStack()
-		# print(stack)
-		return json.dumps({'status':'OK', 'reg':reg, 'memory':memory , 'stack':stack})
+		print("ASDFASDFASFDASFDSFAFDASFASDF", memoryData)
+		return json.dumps({'status':'OK', 'reg':reg, 'memory':memory , 'memoryData':memoryData, 'stack':stack})
 
 
 @app.route('/runSimulator', methods=["GET", "POST"])
@@ -66,9 +67,10 @@ def runSimulator():
 		main.runSimulator()
 		reg = main.getRegisters()
 		memory = main.getMemlocs()
+		memoryData = main.getMemData()
 		stack = main.getStack()
 		print(stack)
-		return json.dumps({'status':'OK', 'reg':reg, 'memory':memory , 'stack':stack})
+		return json.dumps({'status':'OK', 'reg':reg, 'memory':memory, 'memoryData':memoryData, 'stack':stack})
 
 if __name__=="__main__":
 	app.run(host='0.0.0.0', debug=True)

@@ -13,37 +13,7 @@
       return stringOut;
   };
 
-  function printList(x){
-      console.log(x);
-      // var stringOut="";
-      // console.log(x[0])
-      // console.log(x[1])
-      // for (var item : x)
-      // {
-      //   for (var ele in item )
-      //   {
-      //     console.log(ele);
-      //   }
-      //   console.log(item);
-      //   stringOut+=item + "<br>";
-      // }
-      // console.log("HERE" + stringOut);
-      stringOut = "";
-      var printArray = function(arr) {
-          if ( typeof(arr) == "object") {
-              for (var i = 0; i < arr.length; i++) {
-                  printArray(arr[i]);
-                  stringOut+='<br>';
-              }
-          }
-          else stringOut+=str(arr);
-      }
-      printArray(x);
-      return stringOut;
-  }
-
   function printRealDic(x){
-      console.log(x);
       var stringOut="";
       for (var key in x)
           stringOut+=key+": "+x[key]+"<br>";
@@ -51,7 +21,6 @@
   };
 
   function printRealDic2(x){
-      console.log(x);
       var stringOut="";
       for (var key in x)
           if(x[key]===parseInt(x[key],10))
@@ -70,10 +39,6 @@
       for(i=0;i<files.length;i++){
           fileNames[i] = files[i].name;
       }
-
-
-
-
 
       $.ajax({
             type : "POST",
@@ -134,9 +99,9 @@
                 tabs += '<div id="pass2tab'+i+'" class="col s12">';
                 tabs+= '<div class="col s4 offset-s2 card-panel teal white-text" >'+response['pass2'][fileNames[i].split('.')[0]].replace(/\n/g,"<br>")+'</div>';
                 tabs+= '<div id="tables" class="row col s4" style="display:block">';
-                tabs+='<div class="col s12 card-panel teal white-text" > Symbol Table<br>'+printDic(response['symTable'][tempname])+'</div>';
+                tabs+='<div class="col s12 card-panel teal white-text" > Symbols Table<br>'+printDic(response['symTable'][tempname])+'</div>';
                 tabs+='<div class="col s12 card-panel teal white-text" > Literals Table<br>'+printRealDic(response['litTable'][tempname])+'</div>';
-                tabs+='<div class="col s12 card-panel teal white-text" >Global Table<br>'+printDic(response['globTable'][tempname])+'</div>';
+                tabs+='<div class="col s12 card-panel teal white-text" > Global Table<br>'+printDic(response['globTable'][tempname])+'</div>';
                 tabs+= '</div>';
                 tabs+='</div>';
               }
@@ -147,8 +112,6 @@
               $('#linkText').html('<b> Linker Output: </b><br>'+response['lin'].replace(/\n/g,"<br>"));
             }
         });
-
-
   });
 
   function stackString(stack){
@@ -158,9 +121,8 @@
         output+= stack[i]+'<br>';
       };
     return output;
-
-
   };
+
   $('#loadButton').click(function(){
     offset = $('#offset').val();
     $.ajax({
@@ -169,10 +131,12 @@
           data: JSON.stringify({file: fileNames[0].split('.')[0], 'offset':parseInt(offset)}),
           contentType: 'application/json;charset=UTF-8',
           success: function(result) {
-            response = $.parseJSON(result);
+
+          response = $.parseJSON(result);
           $('#registers').html('<b>REGISTERS</b><br>'+printDic(response['reg']));
           $('#memlocs').html('<b>MEMORY LOCATIONS</b><br>'+printRealDic(response['memory']));
-          $('#varlocs').html('<b>VARIABLE LOCATIONS</b><br>'+printRealDic2(response['memory']));
+          $('#varlocs').html('<b>VARIABLE LOCATIONS</b><br>'+printRealDic2(response['memoryData']));
+          console.log(response['memoryData']);
           $('#currentInst').html('<b>CURRENT INSTRUCTION: </b>'+ response['memory'][response['reg']['PC']]);
          }   
       });
@@ -186,10 +150,11 @@
         // contentType: 'application/json;charset=UTF-8',
         success: function(result) {
           response = $.parseJSON(result);
-          $('#registers').html('<b>REGISTERS</b><br>'+printDic(response['reg']));
-          $('#memlocs').html('<b>MEMORY LOCATIONS</b><br>'+printRealDic(response['memory']));
-          $('#varlocs').html('<b>VARIABLE LOCATIONS</b><br>'+printRealDic2(response['memory']));
-          $('#currentInst').html('<b>CURRENT INSTRUCTION: </b>'+ response['memory'][response['reg']['PC']]);
+          $('#registers').html('<b> REGISTERS</b><br>'+printDic(response['reg']));
+          $('#memlocs').html('<b> MEMORY LOCATIONS</b><br>'+printRealDic(response['memory']));
+          $('#varlocs').html('<b> VARIABLE LOCATIONS</b><br>'+printRealDic2(response['memoryData']));
+          console.log(response['memoryData']);
+          $('#currentInst').html('<b> CURRENT INSTRUCTION: </b>'+ response['memory'][response['reg']['PC']]);
           // $('#stack').html(stackString(response['stack']));
 
        }   
@@ -208,6 +173,4 @@
   			$('#'+idarr[i]).show();
   	}
   });
-
-   // end of document ready
-})(jQuery); // end of jQuery name space
+})(jQuery);

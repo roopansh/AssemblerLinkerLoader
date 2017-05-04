@@ -17,6 +17,8 @@ stack = []
 oplen = {}
 dbloc = []
 
+memory = {}
+MainMemoryValues = {}
 
 # check if string passed is an integer
 def isint(string):
@@ -35,15 +37,13 @@ def calculatelen():
 		if line != '' :
 			oplen[line.split(' ')[0]] = int(line.split(' ')[1])
 
-calculatelen()
-memory = {}
-
 def load(filename, offset):
 	inputFile = open(filename,"r")
 	code = inputFile.read()
 	lines = code.split('\n')
 	mem = offset
 	for line in lines :
+		print(line)
 		memory[mem] = line
 		op = line.split(' ')[0].lstrip().rstrip()
 		if op in oplen: # Main opcode
@@ -53,22 +53,26 @@ def load(filename, offset):
 		else: # adding variables to variables table
 			op = line.split(' ')[1].lstrip().rstrip()
 			dbloc.append(mem)
-			print("DBLOC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%", dbloc)
 			mem += oplen[op]
+	print(memory)
 
 def simulator(pc = 0):
 	inst = memory[pc]
 	opcode = inst.split(' ')[0]
-	if opcode not in oplen :
-		opcode = inst.split(' ')[1].lstrip().rstrip()
+	
+	# for DS/DC type of statements
+	try :
+		if opcode not in oplen and inst.split(' ')[1].lstrip().rstrip() in oplen:
+			opcode = inst.split(' ')[1].lstrip().rstrip()
+	except :
+		if opcode not in oplen:
+			opcode = "LITTERAL"
+
 	global stack
 	memlocs = ''
 	for db in dbloc:
 		memlocs += (str(db) + ' : ' + str(memory[db].split(' ')[2]) + '\n')
 
-	# memstr.set(memlocs)
-	print ("MEMLOCS ******************" , memlocs)
-	# raw_input("Press Enter to continue...")
 	if opcode == 'HLT':
 		return
 	elif opcode == 'JMP':
@@ -86,16 +90,27 @@ def simulator(pc = 0):
 		PC = pc + int(oplen[opcode])
 	elif opcode == 'STA':
 		memloc = int(inst.split(' ')[1])
-		memory[memloc] = int(reg['A'])
+		# memory[memloc] = int(reg['A'])
+		MainMemoryValues[str(memloc)] = int(reg['A'])
 		PC = pc + int(oplen[opcode])
 	elif opcode == 'LDA':
 		memloc = int(inst.split(' ')[1])
-		reg['A'] = int(memory[memloc])
+		# reg['A'] = int(memory[memloc])
+		reg ['A'] = int(MainMemoryValues[str(memloc)])
 		PC = pc + int(oplen[opcode])
 	elif opcode == 'MOV':
-		destreg = inst.split(' ')[1].split(',')[0].lstrip().rstrip()
-		srcreg = inst.split(' ')[1].split(',')[1].lstrip().rstrip()
-		reg[destreg] = reg[srcreg]
+		dest = inst.split(' ')[1].split(',')[0].lstrip().rstrip()
+		src = inst.split(' ')[1].split(',')[1].lstrip().rstrip()
+		print("src",src,"dest",dest)
+		# Register to memory
+		if isint(dest):
+			MainMemoryValues[dest] = reg[src]
+		# Memory to Register
+		elif isint(src):
+			reg[dest] = MainMemoryValues[src]
+		# Register to Register
+		else:
+			reg[dest] = reg[src]
 		PC = pc + int(oplen[opcode])
 	elif opcode == 'ADD':
 		srcreg = inst.split(' ')[1]
@@ -152,9 +167,39 @@ def simulator(pc = 0):
 		PC = pc + int(oplen[opcode])
 	elif opcode == "DS":
 		PC = pc + int(oplen[opcode])
-	else:
-		print("ERROR")
+	elif opcode == "LITTERAL":
+		PC = pc + 1
+
 	reg['PC'] = PC
 
 def callbackf():
 	simulator(int(reg['PC']))
+
+# Reset all the memory registers
+def resetAll():
+	global reg
+	global PC
+	global stack
+	global dbloc
+	global memory
+	global MainMemoryValues
+
+	reg['A'] = 0
+	reg['B'] = 0
+	reg['C'] = 0
+	reg['D'] = 0
+	reg['E'] = 0
+	reg['F'] = 0
+	reg['G'] = 0
+	reg['H'] = 0
+	reg['PC'] = 0
+	reg['SP'] = 0
+
+	PC = 0
+	stack = []
+	dbloc = []
+
+	memory = {}
+	MainMemoryValues = {}
+
+calculatelen()

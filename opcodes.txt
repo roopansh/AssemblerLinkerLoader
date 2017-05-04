@@ -79,5 +79,5 @@ XRA 1
 XRI 2
 XTHL 1
 END 1
-DS 4
+DS 1
 DC 1

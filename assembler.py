@@ -1067,19 +1067,19 @@ def pass1(fileNames):
             symtab[filename][var] ="#" + str(location_counter)
             if var in globtab[filename]:
                 globtab[filename][var] ="$" + str(location_counter)
-            location_counter = location_counter + 4
+            location_counter = location_counter + optab["DS"]
 
         for i, literal in enumerate(littab[filename]):
             literal = (literal[0], location_counter)
             littab2[filename][literal[0]] = location_counter
             littab[filename][i] = literal
             assemblycode.append("='" + str(literal[0]) + "'")
-            location_counter = location_counter + 4
+            location_counter = location_counter + 1
 
         for array in arraytab[filename]:
             assemblycode.append(str(array) + ' DS ' + str(arraytab[filename][array][1]))
             arraytab[filename][array][0] = location_counter
-            location_counter = location_counter + 4*int(arraytab[filename][array][1])
+            location_counter = location_counter + optab["DS"]*int(arraytab[filename][array][1])
 
         assemblycode1lines = '\n'.join(assemblycode)
         # print("assembly pass 1 : ")

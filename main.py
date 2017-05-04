@@ -55,3 +55,10 @@ def getStack():
 # get memory locations of simulator
 def getMemlocs():
 	return simulation.memory
+
+# Get the stored values of variables in the memory
+def getMemData():
+	return simulation.MainMemoryValues
+
+def resetAll():
+	simulation.resetAll()
