@@ -43,7 +43,6 @@ def load(filename, offset):
 	lines = code.split('\n')
 	mem = offset
 	for line in lines :
-		print(line)
 		memory[mem] = line
 		op = line.split(' ')[0].lstrip().rstrip()
 		if op in oplen: # Main opcode
@@ -54,7 +53,6 @@ def load(filename, offset):
 			op = line.split(' ')[1].lstrip().rstrip()
 			dbloc.append(mem)
 			mem += oplen[op]
-	print(memory)
 
 def simulator(pc = 0):
 	inst = memory[pc]
@@ -80,7 +78,6 @@ def simulator(pc = 0):
 		PC = nextinst
 	elif opcode == 'MVI':
 		regvar = inst.split(' ')[1].split(',')[0].lstrip().rstrip()  # First Operand
-		print(regvar)
 		secOperand = inst.split(' ')[2].lstrip().rstrip() # Second operand
 		try:
 			if isint(secOperand.split('\'')[1].lstrip().rstrip('\'')) :
@@ -105,7 +102,6 @@ def simulator(pc = 0):
 	elif opcode == 'MOV':
 		dest = inst.split(' ')[1].split(',')[0].lstrip().rstrip()
 		src = inst.split(' ')[1].split(',')[1].lstrip().rstrip()
-		print("src",src,"dest",dest)
 		# Register to memory
 		if isint(dest):
 			MainMemoryValues[dest] = reg[src]

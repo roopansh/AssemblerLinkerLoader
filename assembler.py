@@ -158,7 +158,7 @@ def pass1(fileNames):
                     # move in a register the value(immeidate data avaialble)
                     assemblycode.append("MVI D, ='" + str(var2) + "'")
                     # move register in storage element(in DS)
-                    assemblycode.append("MOV " + '#' + str(var1) +" ,D")
+                    assemblycode.append("MOV " + '#' + str(var1) +",D")
                     # push the symbol in symtab[filename] and symbol name along with #(representing a var)
                     symtab[filename][var1] ='#' + str(var1)
                     globtab[filename][var1] ='#' + str(var1)
@@ -175,7 +175,7 @@ def pass1(fileNames):
                     # push in symtab along with symbil
                     symtab[filename][var1] ='#' + str(var1)
                     globtab[filename][var1] ='#' + str(var1)
-                    assemblycode.append("MOV " + str(symtab[filename][var1]) + ' ,D ')  # load from that register
+                    assemblycode.append("MOV " + str(symtab[filename][var1]) + ',D ')  # load from that register
                     location_counter = location_counter + optab['LDA'] + optab['STA']
                 vartab[filename].append(var1)
 
@@ -193,7 +193,7 @@ def pass1(fileNames):
                 # var a = 5
                 if isint(var2):
                     assemblycode.append("MVI D, ='" + str(var2) + "'")
-                    assemblycode.append("MOV " + '#' + str(var1) +" ,D")
+                    assemblycode.append("MOV " + '#' + str(var1) +",D")
                     # push the symbol in symtab[filename] and current location counter just for now(will be updated in pass2
                     symtab[filename][var1] ='#' + str(var1)
                     pooltab.append(pooltab_counter)
@@ -208,7 +208,7 @@ def pass1(fileNames):
                     assemblycode.append("MOV D," + symtab[filename][var2])  # load to any register
                     # push in symtab
                     symtab[filename][var1] ='#' + str(var1)
-                    assemblycode.append("MOV " + symtab[filename][var1] + ' ,D ')  # load from that register
+                    assemblycode.append("MOV " + symtab[filename][var1] + ',D ')  # load from that register
                     location_counter = location_counter + optab['MOV'] + optab['MOV']
                 vartab[filename].append(var1)
 
@@ -276,9 +276,9 @@ def pass1(fileNames):
                     location_counter = location_counter + optab['LDA'] + optab['MOV'] + optab['LDA'] + optab['ADD'] + optab['STA']
 
             elif reminus.match(line):
-                var1 = replus.match(line).group(1)
-                var2 = replus.match(line).group(2)
-                var3 = replus.match(line).group(3)
+                var1 = reminus.match(line).group(1)
+                var2 = reminus.match(line).group(2)
+                var3 = reminus.match(line).group(3)
                 if isint(var1) or var1 not in symtab[filename]:
                     error = "syntax error =>  " + line
                     return
@@ -296,8 +296,9 @@ def pass1(fileNames):
                         error = "Variable " + var3 + " not declared in " + line
                         return
 
-                    assemblycode.append("LDA " + str(symtab[filename][var3]))
-                    assemblycode.append("SUI " + str(var2))
+                    assemblycode.append("MVI A, " + str(var2))
+                    assemblycode.append("MOV B," + str(symtab[filename][var3]))
+                    assemblycode.append("SUB B")
                     assemblycode.append("STA " + str(symtab[filename][var1]))
                     location_counter = location_counter + optab['LDA'] + optab['SUI'] + optab['STA']
 
