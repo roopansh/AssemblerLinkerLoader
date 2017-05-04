@@ -1,5 +1,1 @@
-var a = 5
-var b = 10
-if 3 < b
-a = 5 + 10
-endif
+var a[5]

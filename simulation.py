@@ -52,8 +52,9 @@ def load(filename, offset):
 		else: # adding variables to variables table
 			op = line.split(' ')[1].lstrip().rstrip()
 			dbloc.append(mem)
-			mem += oplen[op]
-
+			size = line.split(' ')[2]
+			mem += int(oplen[op])*int(size)
+	
 def simulator(pc = 0):
 	inst = memory[pc]
 	opcode = inst.split(' ')[0]
@@ -172,7 +173,8 @@ def simulator(pc = 0):
 	elif opcode == "END":
 		PC = pc + int(oplen[opcode])
 	elif opcode == "DS":
-		PC = pc + int(oplen[opcode])
+		size = inst.split(' ')[2]
+		PC = pc + int(oplen[opcode])*int(size)
 	elif opcode == "CALL":
 		reg['SP'] = pc
 		functionAddress = inst.split(' ')[1].lstrip().rstrip()
