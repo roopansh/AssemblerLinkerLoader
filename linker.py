@@ -7,8 +7,8 @@ globtab = assembler.globtab
 
 def findfile(string, files):
 	for file in files:
-		if string in globtab[file.split('.')[0]] and "@" in globtab[file.split('.')[0]][string]:
-			return file.split('.')[0], globtab[file.split('.')[0]][string].split("@")[1]
+		if string in globtab[file.split('.')[0]] and "$" in globtab[file.split('.')[0]][string]:
+			return file.split('.')[0], globtab[file.split('.')[0]][string].split("$")[1]
 	return "Not found", "-1"
 
 def link(fileNames):
@@ -67,5 +67,6 @@ def link(fileNames):
 
 
 if __name__ == "__main__":
-	assembler.pass1(['test.txt','test1.txt'])
-	link(['test.txt','test1.txt'])
+	FilesTesting = ['test_ext_a.txt','test_ext_b.txt']
+	assembler.pass1(FilesTesting)
+	link(FilesTesting)
