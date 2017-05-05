@@ -55,7 +55,7 @@
               tabs = "";
               tabs += '<div class="row" style="padding-top:10%;"><div class="col s12" tab-indicator-black><ul class="tabs tabs-fixed-width ">';
               for(i=0;i<fileNames.length;i++){
-                tabs += ' <li class="tab col"><a class="brown lighten-3 brown-text text-darken-4 " href="#filetab'+i+'">'+fileNames[i]+'</a></li>';
+                tabs += ' <li class="tab col"><a class="brown lighten-3 brown-text text-darken-4" href="#filetab'+i+'">'+fileNames[i]+'</a></li>';
               }
               tabs += '</ul></div>';
               for(i=0;i<fileNames.length;i++){               
@@ -70,7 +70,7 @@
               tabs = "";
               tabs += '<div class="row" ><div class="col s12"><ul class="tabs tabs-fixed-width">';
               for(i=0;i<fileNames.length;i++){
-                tabs += ' <li class="tab col"><a class="brown lighten-3 brown-text text-darken-4 href="#pass1tab'+i+'">'+fileNames[i]+'</a></li>';
+                tabs += ' <li class="tab col"><a class="brown lighten-3 brown-text text-darken-4" href="#pass1tab'+i+'">'+fileNames[i]+'</a></li>';
               }                    
 
               tabs += '</ul></div>';

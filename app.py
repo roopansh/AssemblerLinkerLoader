@@ -25,9 +25,9 @@ def load_ajax():
 		globTable = main.getGlobTable()
 		extTable = main.getExtTable()
 		litTable = main.getLitTable()
-		print("LITTAB", litTable)
-		print("SYMTAB", symTable)
-		print("GLOBTABLE", globTable)
+		# print("LITTAB", litTable)
+		# print("SYMTAB", symTable)
+		# print("GLOBTABLE", globTable)
 		
 		pass1 = {}
 		pass2 = {}
@@ -51,13 +51,13 @@ def loadSimulator():
 		offset = data['offset']
 		main.runload(int(offset))
 		fileName = fileName+'.loaded'
-		print(fileName)
+		# print(fileName)
 		main.runloader(fileName, offset)
 		reg = main.getRegisters()
 		memory = main.getMemlocs()
 		memoryData = main.getMemData()
 		stack = main.getStack()
-		print("ASDFASDFASFDASFDSFAFDASFASDF", memoryData)
+		# print("ASDFASDFASFDASFDSFAFDASFASDF", memoryData)
 		return json.dumps({'status':'OK', 'reg':reg, 'memory':memory , 'memoryData':memoryData, 'stack':stack})
 
 
@@ -69,7 +69,7 @@ def runSimulator():
 		memory = main.getMemlocs()
 		memoryData = main.getMemData()
 		stack = main.getStack()
-		print(stack)
+		print("STACK : ", stack)
 		return json.dumps({'status':'OK', 'reg':reg, 'memory':memory, 'memoryData':memoryData, 'stack':stack})
 
 if __name__=="__main__":

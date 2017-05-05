@@ -7,8 +7,8 @@ c = d + e
 mend
 macro
 incr c,&add,&bdd=1
-var add=5
-var bdd=10
+add = add + 5
+bdd = bdd + 10
 mend
 incr c,bdd=d,add=e
 foo

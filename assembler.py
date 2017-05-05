@@ -1244,8 +1244,14 @@ def pass2(filename):
 		file.write(assemblycode2lines)
 		file.close()
 
+	print("OPTAB : ", optab)
+	print("IFTABLE : ", iftable)
+	print("F CALLS : ", fcalls)
+	print("POOLTAB : ", pooltab)
+	print("LITTAB : ", littab)
+
 if __name__ == "__main__":
-	pass1(['test1.txt'])
+	pass1(['test_ifelse.txt'])
 
 if not error == "False" :
 	print(error)
