@@ -169,17 +169,19 @@ def pass1(fileNames):
 						for i in range(macro_varscount):
 							temp_var=macro_vars.split(',')[i]
 							temp_value=""
-							if "&" in temp_var:
+							if "&" in temp_var and "=" in temp_var:
+								temp_type=2
+								temp_value=temp_var.split("=")[1]
+								temp_name=temp_var.split('&')[1].split("=")[0]
+
+							elif "&" in temp_var:
 								# might add some error handling later for case when it is of this type 
 								# but while using macro is not in current order
 								temp_type=1
 								print("!!!!!!!!!!!!!!11111")
 								print(temp_var)
 								temp_name=temp_var.split('&')[1]
-							if "&" in temp_var and "=" in temp_var:
-								temp_type=2
-								temp_value=temp_var.split("=")[1]
-								temp_name=temp_var.split('&')[1].split("=")[0]
+							
 							else:
 								temp_type=3
 								temp_name=temp_var
@@ -200,10 +202,10 @@ def pass1(fileNames):
 
 
 			elif (line.split(' ')[0].lstrip().rstrip() in macro):
-				code=macro[macro_name]["code"]
-				variables=macro[macro_name]["variable"]
+				m_name=line.split(' ',1)[0].lstrip().rstrip()
+				code=macro[m_name]["code"]
+				variables=macro[m_name]["variable"]
 
-				macro_name	=line.split(' ', 1)[0].lstrip().rstrip()
 				if(len(line.split(' ',1)) !=1):
 					params = line.split(' ', 1)[1].split(',')
 				else:
@@ -220,8 +222,10 @@ def pass1(fileNames):
 								variables[i][1]=param[1]
 								flag=1
 								break
-						
+								
 						if flag is 0:
+							print(variables)
+							print(parameter)
 							error = "Error in macor parameters"
 							return error
 						# macro_variables=[temp_varname,temp_varvalue,temp_vartype]

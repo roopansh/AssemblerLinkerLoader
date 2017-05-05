@@ -9,6 +9,6 @@ macro
 incr c,&add,&bdd
 var add=5
 var bdd=10
+foo
 mend
 incr c,bdd=d,add=e
-foo
