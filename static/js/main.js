@@ -53,14 +53,14 @@
               $('#currentInst').html("Nothing Loaded yet");
               $('#stack').html("Stack");
               tabs = "";
-              tabs += '<div class="row"><div class="col s12"><ul class="tabs">';
+              tabs += '<div class="row" style="padding-top:10%;"><div class="col s12" tab-indicator-black><ul class="tabs tabs-fixed-width ">';
               for(i=0;i<fileNames.length;i++){
-                tabs += ' <li class="tab col s3"><a class="teal-text tab-indicator-teal" href="#filetab'+i+'">'+fileNames[i]+'</a></li>';
+                tabs += ' <li class="tab col"><a class="brown lighten-3 brown-text text-darken-4 " href="#filetab'+i+'">'+fileNames[i]+'</a></li>';
               }
               tabs += '</ul></div>';
               for(i=0;i<fileNames.length;i++){               
                 tabs += '<div id="filetab'+i+'" class="col s12">';
-                tabs+= '<div class="col s4 offset-s4 card-panel teal white-text" >'+response['filedata'][fileNames[i]].replace(/\n/g,"<br>")+'</div>';
+                tabs+= '<div class="col s4 offset-s4 card-panel brown lighten-4 hoverable black-text" >'+response['filedata'][fileNames[i]].replace(/\n/g,"<br>")+'</div>';
                 tabs+='</div>';
               }
               tabs += '</div>';
@@ -68,40 +68,40 @@
 
 
               tabs = "";
-              tabs += '<div class="row"><div class="col s12"><ul class="tabs">';
+              tabs += '<div class="row" ><div class="col s12"><ul class="tabs tabs-fixed-width">';
               for(i=0;i<fileNames.length;i++){
-                tabs += ' <li class="tab col s3"><a href="#pass1tab'+i+'">'+fileNames[i]+'</a></li>';
+                tabs += ' <li class="tab col"><a class="brown lighten-3 brown-text text-darken-4 href="#pass1tab'+i+'">'+fileNames[i]+'</a></li>';
               }                    
 
               tabs += '</ul></div>';
               for(i=0;i<fileNames.length;i++){
                 var tempname = fileNames[i].split('.')[0];
                 tabs += '<div id="pass1tab'+i+'" class="col s12">';
-                tabs+= '<div class="col s4 offset-s2 card-panel teal white-text" >'+response['pass1'][fileNames[i].split('.')[0]].replace(/\n/g,"<br>")+'</div>';
+                tabs+= '<div class="col s4 offset-s2 card-panel brown lighten-4 hoverable black-text" >'+response['pass1'][fileNames[i].split('.')[0]].replace(/\n/g,"<br>")+'</div>';
                 tabs+= '<div id="tables" class="row col s4" style="display:block">';
-                tabs+='<div class="col s12 card-panel teal white-text" > Symbols Table<br>'+printDic(response['symTable'][tempname])+'</div>';
-                tabs+='<div class="col s12 card-panel teal white-text" > Literals Table<br>'+printRealDic(response['litTable'][tempname])+'</div>';
-                tabs+='<div class="col s12 card-panel teal white-text" > Global Table<br>'+printDic(response['globTable'][tempname])+'</div>';
+                tabs+='<div class="col s12 card-panel brown lighten-4 hoverable black-text" > Symbols Table<br>'+printDic(response['symTable'][tempname])+'</div>';
+                tabs+='<div class="col s12 card-panel brown lighten-4 hoverable black-text" > Literals Table<br>'+printRealDic(response['litTable'][tempname])+'</div>';
+                tabs+='<div class="col s12 card-panel brown lighten-4 hoverable black-text" > Global Table<br>'+printDic(response['globTable'][tempname])+'</div>';
                 tabs+= '</div>';
                 tabs+='</div>';
               }
               tabs += '</div>';
               $('#pass1').html(tabs);
               tabs = "";
-              tabs += '<div class="row"><div class="col s12"><ul class="tabs">';
+              tabs += '<div class="row"><div class="col s12"><ul class="tabs tabs-fixed-width">';
               for(i=0;i<fileNames.length;i++){
-                tabs += ' <li class="tab col s3"><a href="#pass2tab'+i+'">'+fileNames[i]+'</a></li>';
+                tabs += ' <li class="tab col"><a class="brown lighten-3 brown-text text-darken-4" href="#pass2tab'+i+'">'+fileNames[i]+'</a></li>';
               }                    
 
               tabs += '</ul></div>';
               for(i=0;i<fileNames.length;i++){
                 var tempname = fileNames[i].split('.')[0];
                 tabs += '<div id="pass2tab'+i+'" class="col s12">';
-                tabs+= '<div class="col s4 offset-s2 card-panel teal white-text" >'+response['pass2'][fileNames[i].split('.')[0]].replace(/\n/g,"<br>")+'</div>';
+                tabs+= '<div class="col s4 offset-s2 card-panel brown lighten-4 hoverable black-text " >'+response['pass2'][fileNames[i].split('.')[0]].replace(/\n/g,"<br>")+'</div>';
                 tabs+= '<div id="tables" class="row col s4" style="display:block">';
-                tabs+='<div class="col s12 card-panel teal white-text" > Symbols Table<br>'+printDic(response['symTable'][tempname])+'</div>';
-                tabs+='<div class="col s12 card-panel teal white-text" > Literals Table<br>'+printRealDic(response['litTable'][tempname])+'</div>';
-                tabs+='<div class="col s12 card-panel teal white-text" > Global Table<br>'+printDic(response['globTable'][tempname])+'</div>';
+                tabs+='<div class="col s12 card-panel teal  brown lighten-4 hoverable black-text" > Symbols Table<br>'+printDic(response['symTable'][tempname])+'</div>';
+                tabs+='<div class="col s12 card-panel teal  brown lighten-4 hoverable black-text" > Literals Table<br>'+printRealDic(response['litTable'][tempname])+'</div>';
+                tabs+='<div class="col s12 card-panel teal  brown lighten-4 hoverable black-text" > Global Table<br>'+printDic(response['globTable'][tempname])+'</div>';
                 tabs+= '</div>';
                 tabs+='</div>';
               }
