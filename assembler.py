@@ -145,7 +145,6 @@ def pass1(fileNames):
 
 		macro_define=0
 		codelines=[]
-		print(lines)
 
 		for line in lines:
 			line = line.lstrip().rstrip()
@@ -178,8 +177,6 @@ def pass1(fileNames):
 								# might add some error handling later for case when it is of this type 
 								# but while using macro is not in current order
 								temp_type=1
-								print("!!!!!!!!!!!!!!11111")
-								print(temp_var)
 								temp_name=temp_var.split('&')[1]
 							
 							else:
@@ -224,15 +221,11 @@ def pass1(fileNames):
 								break
 								
 						if flag is 0:
-							print(variables)
-							print(parameter)
 							error = "Error in macor parameters"
 							return error
 						# macro_variables=[temp_varname,temp_varvalue,temp_vartype]
 					
 					else:
-						print("@@@@@@@@@@@@")
-						print(param)
 						variables[count][1]=param[0]
 						count=count+1
 
@@ -240,13 +233,10 @@ def pass1(fileNames):
 					for v in variables:
 						code[i]=code[i].replace(v[0],v[1])
 				
-				print("*******************")
 				codelines= codelines+code
 				# lines. 
 			else:
 				codelines.append(line)
-
-		print(codelines)
 
 		for line in codelines:
 			
