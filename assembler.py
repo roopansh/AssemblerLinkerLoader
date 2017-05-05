@@ -970,6 +970,7 @@ def pass1(fileNames):
 				assemblycode.append("SUI 1")
 				assemblycode.append("MOV E,A")
 				assemblycode.append("JNZ ~~~" + "loop" + str(loops - 1))
+				loops -= 1
 				assemblycode.append("POP E")
 				location_counter = location_counter + optab["MOV"] + optab["SUI"] + optab["MOV"] + optab["JNZ"] + optab[
 					"POP"]
