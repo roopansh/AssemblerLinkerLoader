@@ -1,1 +1,10 @@
-global a = 5
+var d=1
+var e=1
+macro
+incr add,bdd
+var add=5
+var bdd=10
+mend
+var c=1
+incr add=d,bdd=e
+c=d+e

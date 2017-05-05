@@ -143,6 +143,10 @@ def pass1(fileNames):
 		fcalls = {}
 		macro = {}
 
+		macro_define=0
+		codelines=[]
+		print(lines)
+
 		for line in lines:
 			line = line.lstrip().rstrip()
 
@@ -154,42 +158,91 @@ def pass1(fileNames):
 				macro_define=0
 				continue
 
-			if (macro_define !=0 ):
+			elif (macro_define !=0 ):
 				if(macro_define ==1):
 					macro_name=line.split(' ',1)[0].lstrip().rstrip()
 
-					macro_vars=line.split(' ',1)[1].replace(" ","")
-					macro_varscount=len(macro_vars.split(','))
-					macro_variables=[]
-					for i in range(macro_varscount):
-						temp_var=macro_vars.split(',')[i+1]
-						temp_value=""
-						if "&" in temp_var:
-							# might add some error handling later for case when it is of this type 
-							# but while using macro is not in current order
-							temp_type=1
-							temp_name=temp_.split('&')[1]
-						if "&" in temp_var and "=" in temp_var:
-							temp_type=2
-							temp_value=temp_var.split("=")[1]
-							temp_name=temp_var.split('&')[1].split("=")[0]
-						else:
-							temp_type=3
-							temp_name=temp_var
-						macro_variables.append([temp_name,temp_varvalue,temp_vartype])
-						# might have to add temp_defaultvalue as seperate then varvalue
+					if(len(line.split(' ',1)) != 1):
+						macro_vars=line.split(' ',1)[1].replace(" ","")
+						macro_varscount=len(macro_vars.split(','))
+						macro_variables=[]
+						for i in range(macro_varscount):
+							temp_var=macro_vars.split(',')[i]
+							temp_value=""
+							if "&" in temp_var:
+								# might add some error handling later for case when it is of this type 
+								# but while using macro is not in current order
+								temp_type=1
+								temp_name=temp_.split('&')[1]
+							if "&" in temp_var and "=" in temp_var:
+								temp_type=2
+								temp_value=temp_var.split("=")[1]
+								temp_name=temp_var.split('&')[1].split("=")[0]
+							else:
+								temp_type=3
+								temp_name=temp_var
+							macro_variables.append([temp_name,temp_value,temp_type])
+							# might have to add temp_defaultvalue as seperate then varvalue
+					else:
+						macro_variables=[]
 
 					macro_define=2
 					macro[macro_name] = {}
-					macro[macro_name][code] = []
-					macro[macro_name][variable]=macro_variables
+					macro[macro_name]["code"] = []
+					macro[macro_name]["variable"]=macro_variables
 
 				else:
-					macro[macro_name][code].append(line)
+					macro[macro_name]["code"].append(line)
 
 				continue
 
-			elif reglo.match(line):
+
+			elif (line.split(' ')[0].lstrip().rstrip() in macro):
+				code=macro[macro_name]["code"]
+				variables=macro[macro_name]["variable"]
+
+				macro_name	=line.split(' ', 1)[0].lstrip().rstrip()
+				if(len(line.split(' ',1)) !=1):
+					params = line.split(' ', 1)[1].split(',')
+				else:
+					params=[]
+				count=0
+				for p in params:
+					param = p.lstrip().rstrip().split("=")
+
+					if "=" in p:
+						parameter = param[0]
+						flag=0
+						for i,v in enumerate(variables):
+							if (parameter == v[0]):
+								variables[i][1]=param[1]
+								flag=1
+								break
+						
+						if flag is 0:
+							error = "Error in macor parameters"
+							return error
+						# macro_variables=[temp_varname,temp_varvalue,temp_vartype]
+					
+					else:
+						variables[count][1]=param[1]
+						count=count+1
+
+				for i,l in enumerate(code):
+					for v in variables:
+						code[i]=code[i].replace(v[0],v[1])
+				
+				print("*******************")
+				codelines= codelines+code
+				# lines. 
+			else:
+				codelines.append(line)
+
+		print(codelines)
+
+		for line in codelines:
+			
+			if reglo.match(line):
 				var1 = reglo.match(line).group(1)
 				var2 = reglo.match(line).group(2)
 				
@@ -1100,39 +1153,7 @@ def pass1(fileNames):
 				loc = retag.match(line).group(1)
 				symtab[filename][loc] = "#" + str(location_counter)
 
-			elif (line.strip(' ')[0].lstrip().rstrip() in macro):
-				code=macro[macro_name][code]
-				variables=macro[macro_name][variable]
-
-				macro_name	=line.split(' ', 1)[0].lstrip().rstrip()
-				params = line.split(' ', 1)[1].split(',')
-				count=0
-				for p in params:
-					param = p.lstrip().rstrip().split("=")
-
-					if "=" in p:
-						parameter = param[0]
-						flag=0
-						for i,v in enumerate(variables):
-							if (parameter == v[0]):
-								variables[i][1]=param[1]
-								flag=1
-								break
-						
-						elif (flag==0):
-							error = "Error in macor parameters"
-							return error
-						# macro_variables=[temp_varname,temp_varvalue,temp_vartype]
-					
-					else:
-						variable[count][1]=param[1]
-						count++
-
-				for i,l in enumerate(code):
-					for v in variables:
-						code[i]=code[i].replace(v[0],v[1])
-				lines.
-
+			
 			# if line does not matches with any of the above line.
 			elif line.lstrip().rstrip() != "":
 				error = "Invalid line: " + line
