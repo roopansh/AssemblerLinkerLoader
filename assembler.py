@@ -1168,7 +1168,7 @@ def pass2(filename):
 		file.close()
 
 if __name__ == "__main__":
-	pass1(['test1.txt'])
+	pass1(['test.txt','test1.txt'])
 
 if not error == "False" :
 	print(error)

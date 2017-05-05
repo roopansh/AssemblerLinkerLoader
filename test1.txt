@@ -1,1 +1,2 @@
-global a = 5
+extern a
+var c = a
