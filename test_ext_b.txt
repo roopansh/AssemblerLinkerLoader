@@ -1,2 +1,2 @@
 extern a
-var b = a
+a = a + 2

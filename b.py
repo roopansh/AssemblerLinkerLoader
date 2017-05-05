@@ -36,11 +36,11 @@ print(l)
 # incr add=d,bdd=e
 # c=d+e
 
-# # macro
-# # incr
-# # var a=5
-# # var b=10
-# # mend
-# # var c=1
-# # incr
-# # c=a+b
+# macro
+# incr
+# var a=5
+# var b=10
+# mend
+# var c=1
+# incr
+# c=a+b
