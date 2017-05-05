@@ -6,7 +6,7 @@ foo
 c = d + e
 mend
 macro
-incr c,&add,&bdd
+incr c,&add,&bdd=1
 var add=5
 var bdd=10
 mend
