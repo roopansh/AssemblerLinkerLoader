@@ -173,7 +173,9 @@ def pass1(fileNames):
 								# might add some error handling later for case when it is of this type 
 								# but while using macro is not in current order
 								temp_type=1
-								temp_name=temp_.split('&')[1]
+								print("!!!!!!!!!!!!!!11111")
+								print(temp_var)
+								temp_name=temp_var.split('&')[1]
 							if "&" in temp_var and "=" in temp_var:
 								temp_type=2
 								temp_value=temp_var.split("=")[1]
@@ -225,7 +227,9 @@ def pass1(fileNames):
 						# macro_variables=[temp_varname,temp_varvalue,temp_vartype]
 					
 					else:
-						variables[count][1]=param[1]
+						print("@@@@@@@@@@@@")
+						print(param)
+						variables[count][1]=param[0]
 						count=count+1
 
 				for i,l in enumerate(code):
@@ -1246,7 +1250,7 @@ def pass2(filename):
 		file.close()
 
 if __name__ == "__main__":
-	pass1(['test.txt','test1.txt'])
+	pass1(['test1.txt'])
 
 if not error == "False" :
 	print(error)
