@@ -1,4 +1,6 @@
 var a = 0
 loop 3
-	a = a + 1
+loop 2
+a = a + 1
+endloop
 endloop
