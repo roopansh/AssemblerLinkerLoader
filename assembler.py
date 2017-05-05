@@ -112,6 +112,10 @@ def pass1(fileNames):
 	rejump = re.compile("\s*JUMP\s+(\w+)\s*")
 	retag = re.compile("\s*(\w+)[:]\s*")
 
+	remacro = re.compile("\s*macro\s*")
+	remend = re.compile("\s*mend\s*")
+
+
 	for filenam in fileNames:
 		with open(filenam, 'r') as file:
 			code = file.read()
@@ -137,10 +141,107 @@ def pass1(fileNames):
 		globtab[filename] = {}
 		vartab[filename] = []
 		fcalls = {}
+		macro = {}
+
+		macro_define=0
+		codelines=[]
+		print(lines)
 
 		for line in lines:
 			line = line.lstrip().rstrip()
 
+			if remacro.match(line):
+				macro_define=1
+				continue
+			
+			elif remend.match(line):
+				macro_define=0
+				continue
+
+			elif (macro_define !=0 ):
+				if(macro_define ==1):
+					macro_name=line.split(' ',1)[0].lstrip().rstrip()
+
+					if(len(line.split(' ',1)) != 1):
+						macro_vars=line.split(' ',1)[1].replace(" ","")
+						macro_varscount=len(macro_vars.split(','))
+						macro_variables=[]
+						for i in range(macro_varscount):
+							temp_var=macro_vars.split(',')[i]
+							temp_value=""
+							if "&" in temp_var:
+								# might add some error handling later for case when it is of this type 
+								# but while using macro is not in current order
+								temp_type=1
+								temp_name=temp_.split('&')[1]
+							if "&" in temp_var and "=" in temp_var:
+								temp_type=2
+								temp_value=temp_var.split("=")[1]
+								temp_name=temp_var.split('&')[1].split("=")[0]
+							else:
+								temp_type=3
+								temp_name=temp_var
+							macro_variables.append([temp_name,temp_value,temp_type])
+							# might have to add temp_defaultvalue as seperate then varvalue
+					else:
+						macro_variables=[]
+
+					macro_define=2
+					macro[macro_name] = {}
+					macro[macro_name]["code"] = []
+					macro[macro_name]["variable"]=macro_variables
+
+				else:
+					macro[macro_name]["code"].append(line)
+
+				continue
+
+
+			elif (line.split(' ')[0].lstrip().rstrip() in macro):
+				code=macro[macro_name]["code"]
+				variables=macro[macro_name]["variable"]
+
+				macro_name	=line.split(' ', 1)[0].lstrip().rstrip()
+				if(len(line.split(' ',1)) !=1):
+					params = line.split(' ', 1)[1].split(',')
+				else:
+					params=[]
+				count=0
+				for p in params:
+					param = p.lstrip().rstrip().split("=")
+
+					if "=" in p:
+						parameter = param[0]
+						flag=0
+						for i,v in enumerate(variables):
+							if (parameter == v[0]):
+								variables[i][1]=param[1]
+								flag=1
+								break
+						
+						if flag is 0:
+							error = "Error in macor parameters"
+							return error
+						# macro_variables=[temp_varname,temp_varvalue,temp_vartype]
+					
+					else:
+						variables[count][1]=param[1]
+						count=count+1
+
+				for i,l in enumerate(code):
+					for v in variables:
+						code[i]=code[i].replace(v[0],v[1])
+				
+				print("*******************")
+				codelines= codelines+code
+				# lines. 
+			else:
+				codelines.append(line)
+
+		print(codelines)
+
+		for line in codelines:
+			
 			if reglo.match(line):
 				var1 = reglo.match(line).group(1)
 				var2 = reglo.match(line).group(2)
@@ -967,7 +1068,7 @@ def pass1(fileNames):
 						return
 					else:
 						assemblycode.append("MOV C,A")
-						assemblycode.append("LDA " + str(symtab[filename][var1]))
+						assemblycode.append("LDA " + str(symtab[filename][var]))
 						assemblycode.append("MOV B,A")
 						assemblycode.append("MOV A,C")
 						assemblycode.append("SUB B")
@@ -1024,7 +1125,7 @@ def pass1(fileNames):
 						return
 					else:
 						assemblycode.append("MOV C,A")
-						assemblycode.append("LDA " + str(symtab[filename][var1]))
+						assemblycode.append("LDA " + str(symtab[filename][var]))
 						assemblycode.append("MOV B,A")
 						assemblycode.append("MOV A,C")
 						assemblycode.append("SUB B")
@@ -1052,11 +1153,11 @@ def pass1(fileNames):
 				loc = retag.match(line).group(1)
 				symtab[filename][loc] = "#" + str(location_counter)
 
+			
 			# if line does not matches with any of the above line.
 			elif line.lstrip().rstrip() != "":
 				error = "Invalid line: " + line
 				return
-
 
 		filelentab[filename] = location_counter
 		# all lines have been passed in pass1
@@ -1083,8 +1184,6 @@ def pass1(fileNames):
 			location_counter = location_counter + optab["DS"]*int(arraytab[filename][array][1])
 
 		assemblycode1lines = '\n'.join(assemblycode)
-		# print("assembly pass 1 : ")
-		# print(assemblycode1lines)
 		pass1code = assemblycode
 
 		with open(filename+".pass1", "w") as file:
@@ -1096,7 +1195,6 @@ def pass1(fileNames):
 def pass2(filename):
 	assco = []
 	for line in pass1code:
-		# print("line is : " + line)
 		# No special symbol in the line
 		if "&&&" not in line and "!!!" not in line and "~~~" not in line and "#" not in line :
 			assco.append(line)
@@ -1130,38 +1228,18 @@ def pass2(filename):
 				line = line.replace("#" + varpe, "@" + str(int(arraytab[filename][varpestrip][0]) + int(disp)*1 ))
 			else:
 				line = line.replace("#", "@" )
-				print(varpestripped)
 
 			assco.append(line)
 
-		# # Only when declaring Global Variables
-		# elif "$" in line:
-		#     print("coming here....")
-		#     varp = line.split("$")[1]
-		#     # print(varp)
-		#     varp = varp.split(',')
-		#     # print(varp[0])
-		#     varpe = varp[0]
-		#     varpestripped = varpe.lstrip().rstrip()
-		#     # print("--------------")
-		#     # print(globtab[filename][varpestripped].strip('$'))
-		#     print(globtab)
-		#     line = line.replace("$" + varpe, "$   " + str(globtab[filename][varpestripped].strip('$')))
-		#     assco.append(line)
-		
 		# Call to Loops/Functions
 		else:
 			jc = line.split("~~~")[1]
-			print(jc)
 			line = line.replace("~~~" + line.split("~~~")[1], str(symtab[filename][jc]))
 			line = line.replace("#", "@" )
 			assco.append(line)
 
 	assemblycode2lines = '\n'.join(assco)
-	# print("assembly pass 2: ")
-	# print(assemblycode2lines)
-	# print(filelentab)
-	# print(assco)
+
 
 	with open(filename + ".pass2", "w") as file:
 		file.write(assemblycode2lines)
